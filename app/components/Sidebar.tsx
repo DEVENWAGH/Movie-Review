@@ -8,14 +8,14 @@ import {
     InformationCircleIcon,
     PhoneIcon,
 } from "@heroicons/react/24/outline";
-import { Link } from "react-router";
+import { Link } from "react-router";  // Updated import
 
 export function Sidebar() {
     const mainNav = [
         { name: "Trending", icon: FireIcon, path: "/trending" },
         { name: "Popular", icon: ChartBarIcon, path: "/popular" },
-        { name: "Movies", icon: FilmIcon, path: "/movies" },
-        { name: "TV Shows", icon: TvIcon, path: "/tv" },
+        { name: "Movies", icon: FilmIcon, path: "/discover/movie" }, // Updated path
+        { name: "TV Shows", icon: TvIcon, path: "/discover/tv" },
         { name: "People", icon: UsersIcon, path: "/people" },
     ];
 

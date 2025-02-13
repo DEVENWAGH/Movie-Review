@@ -48,7 +48,7 @@ const searchSlice = createSlice({
       })
       .addCase(searchMulti.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to search';
+        state.error = action.error.message ?? 'Failed to search';
       });
   },
 });

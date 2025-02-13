@@ -8,8 +8,7 @@ import {
   GlobeAltIcon,
   ChevronDownIcon 
 } from "@heroicons/react/24/outline";
-import { Link } from "react-router"; // Changed to react-router-dom
-import axios from "../../app/utils/axios";
+import { Link } from "react-router";  // Updated import
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { setQuery, clearSearch, searchMulti } from "../store/slices/searchSlice";
 import { setLanguage } from "../store/slices/languageSlice";

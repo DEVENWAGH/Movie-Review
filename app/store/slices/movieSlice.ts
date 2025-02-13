@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from '../../utils/axios';
 
 interface MovieState {
-  wallpaper: any | null;
+  wallpaper: string | null;
   loading: boolean;
   error: string | null;
 }
@@ -38,7 +38,7 @@ const movieSlice = createSlice({
       })
       .addCase(fetchWallpaper.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to fetch wallpaper';
+        state.error = action.error.message ?? 'Failed to fetch wallpaper';
       });
   },
 });

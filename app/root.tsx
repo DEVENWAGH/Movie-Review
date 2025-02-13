@@ -25,7 +25,7 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <head>
@@ -51,7 +51,7 @@ export default function App() {
   );
 }
 
-export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+export function ErrorBoundary({ error }: Readonly<Route.ErrorBoundaryProps>) {
   let message = "Oops!";
   let details = "An unexpected error occurred.";
   let stack: string | undefined;
