@@ -1,4 +1,4 @@
-import { Movie } from "../movie/movie";
+import Movie from "../movie/movie";
 import { Sidebar } from "../components/Sidebar";
 
 export default function Home() {
