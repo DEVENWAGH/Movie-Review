@@ -60,10 +60,10 @@ export default function Card({
           )}
         </div>
         <div className={`mt-4 ${isSlider ? 'max-w-[200px]' : ''}`}>
-          <h3 className="text-white font-medium truncate text-sm">
+          <h3 className="text-white font-medium truncate text-sm font-heading">
             {title || name}
           </h3>
-          <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
+          <div className="flex items-center gap-2 text-xs text-gray-400 mt-1 font-sans">
             <span className="capitalize">{media_type}</span>
             <span>•</span>
             <span>{formatDate(release_date || first_air_date)}</span>
