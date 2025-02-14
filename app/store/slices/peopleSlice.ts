@@ -17,31 +17,18 @@ const initialState: PeopleState = {
   totalPages: 1
 };
 
-const filterInappropriateContent = (items: any[]) => {
-  return items.filter(item => {
-    // Filter out items with inappropriate or adult content
-    const knownFor = item.known_for || [];
-    const isAppropriate = knownFor.every((work: any) => 
-      !work.adult && 
-      (work.media_type === 'movie' || work.media_type === 'tv')
-    );
-    return isAppropriate && item.profile_path; // Only include items with profile images
-  });
-};
-
 export const fetchPeople = createAsyncThunk(
   'people/fetchPeople',
   async (page: number = 1) => {
-    const { data } = await axios.get('/person/popular', {
+    const { data } = await axios.get('person/popular', {
       params: {
         page,
         language: 'en-US'
       }
     });
     
-    const filteredResults = filterInappropriateContent(data.results);
     return {
-      results: filteredResults,
+      results: data.results,
       totalPages: data.total_pages
     };
   }

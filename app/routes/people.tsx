@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchPeople, resetState } from '../store/slices/peopleSlice';
-import InfiniteGrid from '../components/shared/InfiniteGrid';
-import PersonCard from '../components/PersonCard';
+import PeopleInfiniteGrid from '../components/shared/PeopleInfiniteGrid';
 import Layout from '../components/shared/Layout';
 
 export default function PeoplePage() {
@@ -14,8 +13,8 @@ export default function PeoplePage() {
     dispatch(fetchPeople(1));
   }, [dispatch]);
 
-  const fetchMoreData = () => {
-    if (currentPage <= totalPages) {
+  const loadMore = () => {
+    if (!loading && currentPage <= totalPages) {
       dispatch(fetchPeople(currentPage));
     }
   };
@@ -28,17 +27,11 @@ export default function PeoplePage() {
           <p className="mt-2 text-gray-400">Discover trending actors and crew members in the entertainment industry</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {items.map((person) => (
-            <PersonCard key={person.id} {...person} />
-          ))}
-        </div>
-
-        <InfiniteGrid
+        <PeopleInfiniteGrid
           items={items}
           loading={loading}
           hasMore={currentPage <= totalPages}
-          onLoadMore={fetchMoreData}
+          onLoadMore={loadMore}
         />
       </main>
     </Layout>

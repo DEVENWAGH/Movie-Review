@@ -11,10 +11,9 @@ interface PersonCardProps {
 }
 
 const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
-const PLACEHOLDER_IMAGE = '/placeholder-person.jpg'; // Make sure this placeholder exists in your public folder
-
+const PLACEHOLDER_IMAGE = '/logo.svg';
 export default function PersonCard({ profile_path, name, known_for_department, known_for }: Readonly<PersonCardProps>) {
-  const imageUrl = profile_path 
+  const imageUrl = profile_path
     ? `${IMAGE_BASE_URL}${profile_path}`
     : PLACEHOLDER_IMAGE;
 
