@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { fetchDiscover, setSortBy, resetState, type MediaType } from '../store/slices/discoverSlice';
-import Card from './Card';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import InfiniteGrid from './shared/InfiniteGrid';
 
 interface DiscoverProps {
   mediaType: MediaType;
   title: string;
 }
 
-export default function Discover({ mediaType, title }: DiscoverProps) {
+export default function Discover({ mediaType, title }: Readonly<DiscoverProps>) {
   const dispatch = useAppDispatch();
   const { items, loading, currentPage, totalPages, sortBy } = useAppSelector((state) => state.discover);
 
@@ -22,7 +20,7 @@ export default function Discover({ mediaType, title }: DiscoverProps) {
   ];
 
   useEffect(() => {
-    dispatch(resetState()); // Reset state when mediaType changes
+    dispatch(resetState());
     dispatch(fetchDiscover({ mediaType, page: 1, sortBy }));
   }, [dispatch, mediaType, sortBy]);
 
@@ -51,27 +49,13 @@ export default function Discover({ mediaType, title }: DiscoverProps) {
         </div>
       </div>
 
-      {loading && currentPage === 1 ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
-        </div>
-      ) : (
-        <InfiniteScroll
-          dataLength={items.length}
-          next={fetchMoreData}
-          hasMore={currentPage <= totalPages}
-          loader={
-            <div className="flex justify-center items-center py-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-            </div>
-          }
-          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
-        >
-          {items?.map(item => (
-            <Card key={item.id} {...item} mediaType={mediaType} />
-          ))}
-        </InfiniteScroll>
-      )}
+      <InfiniteGrid
+        items={items}
+        loading={loading}
+        hasMore={currentPage <= totalPages}
+        onLoadMore={fetchMoreData}
+        mediaType={mediaType}
+      />
     </main>
   );
 }

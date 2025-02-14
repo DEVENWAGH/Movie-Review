@@ -3,7 +3,7 @@ import TopNav from '../components/TopNav';
 import { Sidebar } from '../components/Sidebar';
 import Discover from '../components/Discover';
 
-export default function Movie() {
+export default function TV() {
   return (
     <div className="flex min-h-screen bg-gray-900">
       <Sidebar />
