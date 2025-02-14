@@ -40,10 +40,12 @@ export default function Card({
   return (
     <Link 
       to={`/details/${media_type}/${id}`} 
-      className={`block w-full relative ${isSlider ? 'pt-4 pb-6 px-2' : 'p-4'}`}
+      className={`block w-full relative ${isSlider ? 'pt-6 pb-8 px-3' : 'p-4'}`}
     >
       <div className="relative group hover:scale-105 transition-transform duration-300">
-        <div className={`relative aspect-[2/3] w-full rounded-lg overflow-hidden bg-gray-800 ${isSlider ? 'max-w-[180px]' : ''}`}>
+        <div className={`relative aspect-[2/3] w-full rounded-xl overflow-hidden bg-gray-800 ${
+          isSlider ? 'max-w-[200px] shadow-lg' : ''
+        }`}>
           <img
             src={`https://image.tmdb.org/t/p/w300${poster_path}`}
             alt={title || name}
@@ -57,7 +59,7 @@ export default function Card({
             </div>
           )}
         </div>
-        <div className={`mt-3 relative z-20 ${isSlider ? 'max-w-[180px]' : ''}`}>
+        <div className={`mt-4 ${isSlider ? 'max-w-[200px]' : ''}`}>
           <h3 className="text-white font-medium truncate text-sm">
             {title || name}
           </h3>

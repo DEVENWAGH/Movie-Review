@@ -13,7 +13,7 @@ export default function Layout({ children }: Readonly<LayoutProps>) {
         <Sidebar />
       </div>
       <div className="flex-1 ml-64">
-        <div className="sticky top-0 z-50 bg-black"> {/* Changed to black */}
+        <div className="sticky top-0 z-50 bg-[#0A1625] border-b border-gray-800">
           <TopNav />
         </div>
         <main className="p-8 relative z-30">

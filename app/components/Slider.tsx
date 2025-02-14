@@ -35,8 +35,8 @@ export default function Slider({ title, items }: Readonly<SliderProps>) {
   };
 
   return (
-    <div className="py-8 group overflow-hidden">
-      <div className="flex items-center justify-between mb-4 px-4">
+    <div className="py-10 group overflow-hidden rounded-2xl bg-black">
+      <div className="flex items-center justify-between mb-6 px-6">
         <div className="flex items-center gap-4">
           <h2 className="text-2xl font-bold text-white">{title}</h2>
           <div className="relative">
@@ -81,14 +81,14 @@ export default function Slider({ title, items }: Readonly<SliderProps>) {
         </div>
       </div>
       
-      <div className="relative px-4">
+      <div className="relative px-6">
         <Swiper
           modules={[Navigation, Mousewheel, Keyboard]}
-          spaceBetween={24}
+          spaceBetween={32}
           slidesPerView="auto"
           mousewheel
           keyboard
-          className="!overflow-hidden bg-black"
+          className="!overflow-visible"
           wrapperClass="!items-stretch"
           onBeforeInit={(swiper) => {
             swiperRef.current = swiper;

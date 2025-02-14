@@ -51,7 +51,7 @@ export default function TopNav() {
   }, [query, dispatch]);
 
   return (
-    <nav className="bg-black border-b border-gray-800">
+    <nav className="bg-[#0A1625] border-b border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Search Bar Container */}
@@ -64,7 +64,7 @@ export default function TopNav() {
                 type="text"
                 value={query}
                 onChange={(e) => dispatch(setQuery(e.target.value))}
-                className="block w-full pl-10 pr-10 py-2 border border-gray-700 rounded-md leading-5 bg-gray-800 text-gray-300 placeholder-gray-400 focus:outline-none focus:bg-gray-700 focus:border-gray-600 focus:ring-gray-600 focus:ring-1 sm:text-sm"
+                className="block w-full pl-10 pr-10 py-2 border border-gray-700 rounded-md leading-5 bg-black text-gray-300 placeholder-gray-400 focus:outline-none focus:bg-[#1A2737] focus:border-gray-600 focus:ring-gray-600 focus:ring-1 sm:text-sm"
                 placeholder="Search movies, TV shows..."
               />
               {query && (
@@ -79,7 +79,7 @@ export default function TopNav() {
 
             {/* Search Results Dropdown */}
             {query && results.length > 0 && (
-              <div className="absolute w-full mt-2 bg-gray-800 rounded-md shadow-lg z-50 border border-gray-700 max-h-96 overflow-y-auto">
+              <div className="absolute w-full mt-2 bg-[#1A2737] rounded-md shadow-lg z-50 border border-gray-700 max-h-96 overflow-y-auto">
                 {results.map((s) => (
                   <Link
                     key={s.id}
@@ -155,14 +155,14 @@ export default function TopNav() {
             <div className="relative">
               <button
                 onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                className="flex items-center space-x-1 p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-800"
+                className="flex items-center space-x-1 p-2 rounded-md text-gray-400 hover:text-white hover:bg-[#1A2737]"
               >
                 <GlobeAltIcon className="h-5 w-5" />
                 <ChevronDownIcon className="h-4 w-4" />
               </button>
 
               {showLanguageMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg z-50 border border-gray-700">
+                <div className="absolute right-0 mt-2 w-48 bg-[#1A2737] rounded-md shadow-lg z-50 border border-gray-700">
                   <div className="py-1">
                     {languages.map((lang) => (
                       <button
@@ -184,7 +184,7 @@ export default function TopNav() {
             {/* Watchlist */}
             <Link
               to="/watchlist"
-              className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800"
+              className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]"
             >
               <BookmarkIcon className="h-6 w-6" />
             </Link>
@@ -192,7 +192,7 @@ export default function TopNav() {
             {/* Notifications */}
             <button
               type="button"
-              className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-gray-800"
+              className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]"
             >
               <BellIcon className="h-6 w-6" />
             </button>
