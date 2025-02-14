@@ -13,7 +13,7 @@ import type { Route } from "./+types/root";
 import "./styles/globals.css";
 
 export const links: Route.LinksFunction = () => [
-  { rel: "icon", type: "image/x-icon", href: "logo.png" },
+  { rel: "icon", type: "image/x-icon", href: "logo.svg" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -69,7 +69,7 @@ export function ErrorBoundary({ error }: Readonly<Route.ErrorBoundaryProps>) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
+    <main className="container p-4 pt-16 mx-auto">
       <h1>{message}</h1>
       <p>{details}</p>
       {stack && (
