@@ -9,6 +9,7 @@ import {
     PhoneIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router";  // Updated import
+import Logo from './Logo';
 
 export function Sidebar() {
     const mainNav = [
@@ -28,7 +29,7 @@ export function Sidebar() {
     return (
         <aside className="w-64 min-h-screen bg-gray-900 text-white p-4">
             <div className="mb-8">
-                <h1 className="text-xl font-bold mb-4">Movie Review</h1>
+                <Logo />
             </div>
 
             <nav className="space-y-8">

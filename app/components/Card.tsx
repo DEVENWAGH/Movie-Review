@@ -1,4 +1,4 @@
-import { Link } from "react-router";  // Updated import
+import { Link } from "react-router";
 
 interface CardProps {
   id: number;
@@ -10,6 +10,8 @@ interface CardProps {
   release_date?: string;
   first_air_date?: string;
   isTrending?: boolean;
+  isSlider?: boolean;
+  showFullDate?: boolean;
 }
 
 export default function Card({
@@ -22,8 +24,18 @@ export default function Card({
   release_date,
   first_air_date,
   isSlider,
-}: Readonly<CardProps & { isSlider?: boolean }>) {
-  const getYear = (date?: string) => (date ? new Date(date).getFullYear() : "");
+  showFullDate,
+}: Readonly<CardProps>) {
+  const formatDate = (date?: string) => {
+    if (!date) return "";
+    return showFullDate 
+      ? new Date(date).toLocaleDateString('en-US', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        })
+      : new Date(date).getFullYear();
+  };
 
   return (
     <Link 
@@ -52,7 +64,7 @@ export default function Card({
           <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
             <span className="capitalize">{media_type}</span>
             <span>•</span>
-            <span>{getYear(release_date || first_air_date)}</span>
+            <span>{formatDate(release_date || first_air_date)}</span>
           </div>
         </div>
       </div>

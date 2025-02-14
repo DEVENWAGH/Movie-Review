@@ -55,6 +55,7 @@ export default function Discover({ mediaType, title }: Readonly<DiscoverProps>) 
         hasMore={currentPage <= totalPages}
         onLoadMore={fetchMoreData}
         mediaType={mediaType}
+        showFullDate={sortBy === 'release_date.desc'}
       />
     </main>
   );

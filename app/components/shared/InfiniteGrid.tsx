@@ -8,6 +8,7 @@ interface InfiniteGridProps {
   hasMore: boolean;
   onLoadMore: () => void;
   mediaType?: string;
+  showFullDate?: boolean;
 }
 
 export default function InfiniteGrid({
@@ -16,6 +17,7 @@ export default function InfiniteGrid({
   hasMore,
   onLoadMore,
   mediaType,
+  showFullDate
 }: Readonly<InfiniteGridProps>) {
   if (loading && items.length === 0) {
     return (
@@ -47,7 +49,11 @@ export default function InfiniteGrid({
       >
         {items.map((item) => (
           <div key={item.id} className="relative">
-            <Card {...item} mediaType={mediaType || item.media_type} />
+            <Card 
+              {...item} 
+              mediaType={mediaType || item.media_type}
+              showFullDate={showFullDate}
+            />
           </div>
         ))}
       </InfiniteScroll>
