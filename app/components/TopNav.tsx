@@ -17,16 +17,6 @@ import {
 } from "../store/slices/searchSlice";
 import { setLanguage } from "../store/slices/languageSlice";
 
-interface SearchResult {
-  id: number;
-  title?: string;
-  name?: string;
-  media_type: string;
-  poster_path?: string;
-  profile_path?: string;
-  overview?: string;
-  known_for_department?: string;
-}
 
 export default function TopNav() {
   const dispatch = useAppDispatch();

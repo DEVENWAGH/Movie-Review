@@ -10,7 +10,7 @@ import { Provider } from 'react-redux';
 import { store } from './store/store';
 
 import type { Route } from "./+types/root";
-import "./app.css";
+import "./styles/globals.css";
 
 export const links: Route.LinksFunction = () => [
   { rel: "icon", type: "image/x-icon", href: "logo.png" },
