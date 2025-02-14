@@ -17,10 +17,10 @@ export function Movie() {
   }, [dispatch, mediaType, timeWindow]);
 
   return (
-    <div>
+    <div className="bg-[#0A1625]">
       <TopNav />
       <Header data={wallpaper} />
-      <main className="container mx-auto px-4">
+      <main className="container mx-auto px-4 py-8">
         <Slider title="Trending" items={trendingItems || []} />
       </main>
     </div>

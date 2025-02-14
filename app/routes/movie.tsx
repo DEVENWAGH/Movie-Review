@@ -1,16 +1,13 @@
 import React from 'react';
-import TopNav from '../components/TopNav';
-import { Sidebar } from '../components/Sidebar';
 import Discover from '../components/Discover';
+import Layout from '../components/shared/Layout';
 
 export default function Movie() {
   return (
-    <div className="flex min-h-screen bg-gray-900">
-      <Sidebar />
-      <div className="flex-1">
-        <TopNav />
+    <Layout>
+      <div className="bg-black rounded-xl p-6">
         <Discover mediaType="movie" title="Discover Movies" />
       </div>
-    </div>
+    </Layout>
   );
 }

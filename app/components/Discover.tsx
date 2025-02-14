@@ -38,7 +38,7 @@ export default function Discover({ mediaType, title }: Readonly<DiscoverProps>) 
           <select
             value={sortBy}
             onChange={(e) => dispatch(setSortBy(e.target.value))}
-            className="bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700"
+            className="bg-[#1A2737] text-white px-4 py-2 rounded-lg border border-gray-700"
           >
             {sortOptions.map(option => (
               <option key={option.value} value={option.value}>
