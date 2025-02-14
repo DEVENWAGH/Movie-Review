@@ -7,4 +7,5 @@ export default [
   route("discover/movie", "routes/movie.tsx"),
   route("discover/tv", "routes/tv.tsx"),
   route("watchlist", "routes/watchlist.tsx"),
+  route("people", "routes/people.tsx"),
 ] satisfies RouteConfig;

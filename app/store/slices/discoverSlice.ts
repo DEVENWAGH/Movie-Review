@@ -10,6 +10,7 @@ interface DiscoverState {
   currentPage: number;
   totalPages: number;
   sortBy: string;
+  category: string;
 }
 
 const initialState: DiscoverState = {
@@ -18,19 +19,38 @@ const initialState: DiscoverState = {
   error: null,
   currentPage: 1,
   totalPages: 1,
-  sortBy: 'popularity.desc'
+  sortBy: 'popularity.desc',
+  category: 'discover'
 };
 
 export const fetchDiscover = createAsyncThunk(
   'discover/fetchDiscover',
-  async ({ mediaType, page = 1, sortBy }: { mediaType: MediaType; page?: number; sortBy: string }) => {
-    const { data } = await axios.get(`/discover/${mediaType}`, {
-      params: {
-        page,
-        sort_by: sortBy,
-        language: 'en-US'
-      }
-    });
+  async ({ 
+    mediaType, 
+    page = 1, 
+    sortBy,
+    category 
+  }: { 
+    mediaType: MediaType; 
+    page?: number; 
+    sortBy: string;
+    category: string;
+  }) => {
+    let endpoint;
+    let params: Record<string, any> = {
+      page,
+      language: 'en-US'
+    };
+
+    if (category === 'discover') {
+      endpoint = `/discover/${mediaType}`;
+      params.sort_by = sortBy;
+    } else {
+      // Handle special categories like now_playing, upcoming, on_the_air, etc.
+      endpoint = `/${mediaType}/${category}`;
+    }
+
+    const { data } = await axios.get(endpoint, { params });
     return {
       results: data.results,
       totalPages: data.total_pages
@@ -44,6 +64,12 @@ const discoverSlice = createSlice({
   reducers: {
     setSortBy: (state, action) => {
       state.sortBy = action.payload;
+      state.items = [];
+      state.currentPage = 1;
+      state.totalPages = 1;
+    },
+    setCategory: (state, action) => {
+      state.category = action.payload;
       state.items = [];
       state.currentPage = 1;
       state.totalPages = 1;
@@ -77,5 +103,5 @@ const discoverSlice = createSlice({
   },
 });
 
-export const { setSortBy, resetState } = discoverSlice.actions;
+export const { setSortBy, setCategory, resetState } = discoverSlice.actions;
 export default discoverSlice.reducer;

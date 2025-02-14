@@ -5,6 +5,7 @@ import languageReducer from './slices/languageSlice';
 import trendingReducer from './slices/trendingSlice';
 import popularReducer from './slices/popularSlice';
 import discoverReducer from './slices/discoverSlice';
+import peopleReducer from './slices/peopleSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     trending: trendingReducer,
     popular: popularReducer,
     discover: discoverReducer,
+    people: peopleReducer,
   },
 });
 
