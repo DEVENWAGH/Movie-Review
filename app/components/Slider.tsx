@@ -1,7 +1,8 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, FreeMode, Mousewheel, Keyboard } from 'swiper/modules';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { motion, useScroll, useTransform, useSpring } from "motion/react";
 import Card from './Card';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { setMediaType, fetchTrending, type MediaType } from '../store/slices/trendingSlice';
@@ -23,6 +24,31 @@ export default function Slider({ title, items, containerStyle = "bg-black" }: Re
   const mediaType = useAppSelector(state => state.trending.mediaType);
   const [showDropdown, setShowDropdown] = React.useState(false);
   const swiperRef = useRef<any>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Create smooth animation values
+  const opacity = useSpring(
+    useTransform(scrollYProgress, [0, 0.2], [0, 1]),
+    { 
+      stiffness: 100,
+      damping: 30,
+      restDelta: 0.001 
+    }
+  );
+  
+  const y = useSpring(
+    useTransform(scrollYProgress, [0, 0.2], [30, 0]),
+    { 
+      stiffness: 100,
+      damping: 30,
+      restDelta: 0.001
+    }
+  );
 
   const categories = [
     { value: 'all', label: 'All' },
@@ -36,9 +62,32 @@ export default function Slider({ title, items, containerStyle = "bg-black" }: Re
     setShowDropdown(false);
   };
 
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.onChange(value => {
+      if (value > 0.5 && !hasAnimated) { // Trigger at 50% scroll progress
+        setHasAnimated(true);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [scrollYProgress, hasAnimated]);
+
   return (
-    <div className={`py-10 group ${containerStyle}`} onWheel={(e) => e.stopPropagation()}>
-      <div className="flex items-center justify-between px-6 mb-6">
+    <motion.div 
+      ref={containerRef}
+      style={{ opacity, y }}
+      className={`py-10 group ${containerStyle} rounded-2xl`} 
+      onWheel={(e) => e.stopPropagation()}
+    >
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ 
+          duration: 0.3,
+          ease: [0.25, 0.1, 0, 1.0]
+        }}
+        className="flex items-center justify-between px-6 mb-6"
+      >
         <div className="flex items-center gap-4">
           <h2 className="text-2xl font-bold text-white">{title}</h2>
           <div className="relative">
@@ -81,43 +130,50 @@ export default function Slider({ title, items, containerStyle = "bg-black" }: Re
             <ChevronRightIcon className="w-6 h-6 text-white" />
           </button>
         </div>
-      </div>
+      </motion.div>
       
       <div className="relative px-6">
-        <Swiper
-          modules={[Navigation, FreeMode, Mousewheel, Keyboard]}
-          navigation
-          freeMode={{
-            enabled: true,
-            sticky: false,
-            momentumRatio: 0.5,
-            minimumVelocity: 0.02
-          }}
-          mousewheel={{
-            forceToAxis: true,
-            sensitivity: 1,
-            releaseOnEdges: true
-          }}
-          keyboard={{
-            enabled: true,
-            onlyInViewport: true
-          }}
-          spaceBetween={32}
-          slidesPerView="auto"
-          preventInteractionOnTransition={true}
-          className="!overflow-visible slider-container"
-          wrapperClass="!items-stretch"
-          onBeforeInit={(swiper) => {
-            swiperRef.current = swiper;
-          }}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="overflow-hidden rounded-2xl"
         >
-          {Array.isArray(items) && items.map((item) => (
-            <SwiperSlide key={item.id} className="!w-auto">
-              <Card {...item} isSlider={true} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+          <Swiper
+            modules={[Navigation, FreeMode, Mousewheel, Keyboard]}
+            navigation
+            freeMode={{
+              enabled: true,
+              sticky: false,
+              momentumRatio: 0.5,
+              minimumVelocity: 0.02
+            }}
+            mousewheel={{
+              forceToAxis: true,
+              sensitivity: 1,
+              releaseOnEdges: true
+            }}
+            keyboard={{
+              enabled: true,
+              onlyInViewport: true
+            }}
+            spaceBetween={32}
+            slidesPerView="auto"
+            preventInteractionOnTransition={true}
+            className="!overflow-visible slider-container"
+            wrapperClass="!items-stretch"
+            onBeforeInit={(swiper) => {
+              swiperRef.current = swiper;
+            }}
+          >
+            {Array.isArray(items) && items.map((item) => (
+              <SwiperSlide key={item.id} className="!w-auto">
+                <Card {...item} isSlider={true} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

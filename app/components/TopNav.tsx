@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   MagnifyingGlassIcon,
   BellIcon,
@@ -15,7 +16,6 @@ import {
 } from "../store/slices/searchSlice";
 import RegionSelector from './RegionSelector';
 import Logo from './Logo';
-import { initNavAnimations } from '../utils/animations';
 
 export default function TopNav() {
   const location = useLocation();
@@ -33,10 +33,7 @@ export default function TopNav() {
     return () => clearTimeout(debounceTimer);
   }, [query, dispatch]);
 
-  useEffect(() => {
-    initNavAnimations();
-  }, []);
-
+  
   const getMediaTypeStyle = (mediaType: string) => {
     switch (mediaType) {
       case 'movie':
@@ -48,16 +45,64 @@ export default function TopNav() {
     }
   };
 
+  const handleSearchScroll = (e: React.WheelEvent) => {
+    const element = e.currentTarget;
+    const scrollTop = element.scrollTop;
+    const scrollHeight = element.scrollHeight;
+    const clientHeight = element.clientHeight;
+
+    // If we're at the top or bottom of the search results, don't prevent default
+    if (
+      (scrollTop === 0 && e.deltaY < 0) || 
+      (scrollTop + clientHeight >= scrollHeight && e.deltaY > 0)
+    ) {
+      return;
+    }
+
+    // Otherwise prevent default to stop main page scroll
+    e.stopPropagation();
+  };
+
   return (
-    <nav className="nav-container bg-[#0A1625] border-b border-gray-800 backdrop-blur-sm bg-opacity-90">
+    <motion.nav 
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ 
+        duration: 3, // Increased from 2 to 4 seconds
+        ease: [0.16, 1, 0.3, 1],
+      }}
+      className="nav-container bg-[#0A1625] border-b border-gray-800 backdrop-blur-sm bg-opacity-90"
+    >
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center flex-1 gap-8">
-            {/* Only show Logo on details page */}
-            {isDetailsPage && <div className="sidebar-logo"><Logo /></div>}
+            {/* Logo with animation */}
+            <AnimatePresence mode="wait">
+              {isDetailsPage && (
+                <motion.div 
+                  key="logo"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
+                  className="sidebar-logo"
+                >
+                  <Logo />
+                </motion.div>
+              )}
+            </AnimatePresence>
             
-            {/* Search Bar Container - Updated width */}
-            <div className="search-container relative flex-1 max-w-3xl">
+            {/* Search Bar Container */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ 
+                duration: 1.2, 
+                delay: 0.8,
+                ease: [0.16, 1, 0.3, 1]
+              }}
+              className="relative flex-1 max-w-3xl search-container"
+            >
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
@@ -80,90 +125,140 @@ export default function TopNav() {
               </div>
 
               {/* Search Results Dropdown */}
-              {query && results.length > 0 && (
-                <div className="absolute w-full mt-2 bg-[#1A2737] rounded-md shadow-lg z-50 border border-gray-700 max-h-96 overflow-y-auto">
-                  {results.map((s) => (
-                    <Link
-                      key={s.id}
-                      to="#"
-                      className="flex items-center px-4 py-3 transition-colors hover:bg-gray-700"
-                    >
-                      {/* Poster/Profile Image */}
-                      {s.poster_path ?? s.profile_path ? (
-                        <div
-                          className={`relative overflow-hidden rounded ${
-                            s.media_type === "person" ? "w-12 h-12" : "w-12 h-16"
-                          }`}
-                        >
-                          <img
-                            src={`https://image.tmdb.org/t/p/w92${
-                              s.poster_path ?? s.profile_path
+              <AnimatePresence>
+                {query && results.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5 }} // Increased from 0.3
+                    className="absolute w-full mt-2 bg-[#1A2737] rounded-md shadow-lg z-50 border border-gray-700 max-h-[60vh] overflow-y-auto custom-scrollbar"
+                    onWheel={handleSearchScroll}
+                  >
+                    {results.map((s) => (
+                      <Link
+                        key={s.id}
+                        to={`/details/${s.media_type}/${s.id}`} // Updated link path
+                        className="flex items-center px-4 py-3 transition-colors hover:bg-gray-700"
+                        onClick={() => dispatch(clearSearch())} // Clear search on click
+                      >
+                        {/* Poster/Profile Image */}
+                        {s.poster_path ?? s.profile_path ? (
+                          <div
+                            className={`relative overflow-hidden rounded ${
+                              s.media_type === "person" ? "w-12 h-12" : "w-12 h-16"
                             }`}
-                            alt={s.title ?? s.name}
-                            className="absolute inset-0 object-cover w-full h-full"
-                          />
-                        </div>
-                      ) : (
-                        <div
-                          className={`bg-gray-700 rounded flex items-center justify-center ${
-                            s.media_type === "person" ? "w-12 h-12" : "w-12 h-16"
-                          }`}
-                        >
-                          <FilmIcon className="w-6 h-6 text-gray-400" />
-                        </div>
-                      )}
+                          >
+                            <img
+                              src={`https://image.tmdb.org/t/p/w92${
+                                s.poster_path ?? s.profile_path
+                              }`}
+                              alt={s.title ?? s.name}
+                              className="absolute inset-0 object-cover w-full h-full"
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className={`bg-gray-700 rounded flex items-center justify-center ${
+                              s.media_type === "person" ? "w-12 h-12" : "w-12 h-16"
+                            }`}
+                          >
+                            <FilmIcon className="w-6 h-6 text-gray-400" />
+                          </div>
+                        )}
 
-                      {/* Title and Media Type */}
-                      <div className="flex-1 ml-3">
-                        <p className="text-sm font-medium text-white">
-                          {s.title ?? s.name}
-                        </p>
-                        <div className="flex items-center mt-1 mb-1">
-                          <span className={`px-2 py-0.5 rounded text-xs ${getMediaTypeStyle(s.media_type)}`}>
-                            {s.media_type?.toUpperCase()}
-                          </span>
+                        {/* Title and Media Type */}
+                        <div className="flex-1 ml-3">
+                          <p className="text-sm font-medium text-white">
+                            {s.title ?? s.name}
+                          </p>
+                          <div className="flex items-center mt-1 mb-1">
+                            <span className={`px-2 py-0.5 rounded text-xs ${getMediaTypeStyle(s.media_type)}`}>
+                              {s.media_type?.toUpperCase()}
+                            </span>
+                          </div>
+                          {s.overview && s.media_type !== "person" && (
+                            <p className="text-xs text-gray-400 line-clamp-2">
+                              {s.overview}
+                            </p>
+                          )}
+                          {s.media_type === "person" && s.known_for_department && (
+                            <p className="text-xs text-gray-400">
+                              {s.known_for_department}
+                            </p>
+                          )}
                         </div>
-                        {s.overview && s.media_type !== "person" && (
-                          <p className="text-xs text-gray-400 line-clamp-2">
-                            {s.overview}
-                          </p>
-                        )}
-                        {s.media_type === "person" && s.known_for_department && (
-                          <p className="text-xs text-gray-400">
-                            {s.known_for_department}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           </div>
 
-          {/* Right side navigation */}
+          {/* Right side navigation with staggered animations */}
           <div className="flex items-center space-x-4">
             {[
-              <RegionSelector key="region" />,
-              <Link key="watchlist" to="/watchlist" className="nav-items p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]">
-                <BookmarkIcon className="w-6 h-6" />
-              </Link>,
-              <button
+              <motion.div
+                key="region"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 1,
+                  delay: 1,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
+              >
+                <RegionSelector />
+              </motion.div>,
+              <motion.div
+                key="watchlist"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 1,
+                  delay: 1.2,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
+              >
+                <Link to="/watchlist" className="nav-items p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]">
+                  <BookmarkIcon className="w-6 h-6" />
+                </Link>
+              </motion.div>,
+              <motion.button
                 key="notifications"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 1,
+                  delay: 1.4,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
                 type="button"
                 className="nav-items p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]"
               >
                 <BellIcon className="w-6 h-6" />
-              </button>,
-              <Link key="profile" to="/profile" className="nav-items flex items-center">
-                <div className="flex items-center justify-center w-8 h-8 text-sm font-medium text-white bg-gray-700 rounded-full">
-                  U
-                </div>
-              </Link>
+              </motion.button>,
+              <motion.div
+                key="profile"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ 
+                  duration: 1,
+                  delay: 3.8,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
+              >
+                <Link to="/profile" className="flex items-center nav-items">
+                  <div className="flex items-center justify-center w-8 h-8 text-sm font-medium text-white bg-gray-700 rounded-full">
+                    U
+                  </div>
+                </Link>
+              </motion.div>
             ]}
           </div>
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 }
