@@ -166,8 +166,8 @@ export default function Slider({ title, items, containerStyle = "bg-black" }: Re
               swiperRef.current = swiper;
             }}
           >
-            {Array.isArray(items) && items.map((item) => (
-              <SwiperSlide key={item.id} className="!w-auto">
+            {Array.isArray(items) && items.map((item, index) => (
+              <SwiperSlide key={`${title}-${item.id}-${index}`} className="!w-auto">
                 <Card {...item} isSlider={true} />
               </SwiperSlide>
             ))}
