@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   MagnifyingGlassIcon,
-  BellIcon,
   XMarkIcon,
   FilmIcon,
   BookmarkIcon,
@@ -221,24 +220,13 @@ export default function TopNav() {
                   ease: [0.16, 1, 0.3, 1]
                 }}
               >
-                <Link to="/watchlist" className="nav-items p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]">
-                  <BookmarkIcon className="w-6 h-6" />
+                <Link 
+                  to="/watchlist" 
+                  className="flex items-center justify-center w-10 h-10 transition-colors rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]"
+                >
+                  <BookmarkIcon className="w-5 h-5" />
                 </Link>
               </motion.div>,
-              <motion.button
-                key="notifications"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ 
-                  duration: 1,
-                  delay: 1.4,
-                  ease: [0.16, 1, 0.3, 1]
-                }}
-                type="button"
-                className="nav-items p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]"
-              >
-                <BellIcon className="w-6 h-6" />
-              </motion.button>,
               <motion.div
                 key="profile"
                 initial={{ opacity: 0, y: -20 }}

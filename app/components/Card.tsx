@@ -3,7 +3,7 @@ import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { BookmarkIcon as BookmarkSolidIcon, StarIcon } from "@heroicons/react/24/solid";
 import { useState, useCallback } from "react";
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { addToWatchlist, rateMedia } from '../store/slices/userActionsSlice';
+import { addToWatchlist, rateMedia, addToRatings } from '../store/slices/userActionsSlice';
 
 interface CardProps {
   id: number;
@@ -71,13 +71,17 @@ export default function Card({
 
   const handleRating = async (rating: number) => {
     try {
-      await dispatch(rateMedia({
+      const response = await dispatch(rateMedia({
         mediaId: id,
         mediaType: resolvedMediaType,
         rating: rating * 2 // Convert 5-star to 10-point scale
       })).unwrap();
-      setUserRating(rating);
-      setIsRatingOpen(false);
+      
+      if (response.success) {
+        // Only set rating if API call was successful
+        dispatch(addToRatings({ mediaId: id, rating }));
+        setIsRatingOpen(false);
+      }
     } catch (error) {
       console.error('Failed to rate:', error);
     }

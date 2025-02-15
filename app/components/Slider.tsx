@@ -63,8 +63,9 @@ export default function Slider({ title, items, containerStyle = "bg-black" }: Re
   };
 
   useEffect(() => {
-    const unsubscribe = scrollYProgress.onChange(value => {
-      if (value > 0.5 && !hasAnimated) { // Trigger at 50% scroll progress
+    // Fix deprecated onChange warning
+    const unsubscribe = scrollYProgress.on("change", (value) => {
+      if (value > 0.5 && !hasAnimated) {
         setHasAnimated(true);
       }
     });
@@ -76,7 +77,7 @@ export default function Slider({ title, items, containerStyle = "bg-black" }: Re
     <motion.div 
       ref={containerRef}
       style={{ opacity, y }}
-      className={`py-10 group ${containerStyle} rounded-2xl`} 
+      className={`py-10 group ${containerStyle} rounded-2xl relative`}
       onWheel={(e) => e.stopPropagation()}
     >
       <motion.div 

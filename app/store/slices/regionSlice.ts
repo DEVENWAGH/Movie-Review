@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getUserLocation } from '../../utils/location';
+import { getUserLocation } from '../../services/location';
 
 interface RegionState {
   region: string;
@@ -8,15 +8,21 @@ interface RegionState {
 }
 
 const initialState: RegionState = {
-  region: 'IN',
+  region: 'IN', // Changed default to India
   loading: false,
   error: null,
 };
 
-export const detectRegion = createAsyncThunk(
-  'region/detect',
+export const initializeRegion = createAsyncThunk(
+  'region/initialize',
   async () => {
-    return await getUserLocation();
+    try {
+      const region = await getUserLocation();
+      return region;
+    } catch (error) {
+      console.error('Region initialization error:', error);
+      return 'US'; // Fallback to US
+    }
   }
 );
 
@@ -30,14 +36,14 @@ const regionSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(detectRegion.pending, (state) => {
+      .addCase(initializeRegion.pending, (state) => {
         state.loading = true;
       })
-      .addCase(detectRegion.fulfilled, (state, action) => {
+      .addCase(initializeRegion.fulfilled, (state, action) => {
         state.region = action.payload;
         state.loading = false;
       })
-      .addCase(detectRegion.rejected, (state) => {
+      .addCase(initializeRegion.rejected, (state) => {
         state.loading = false;
         state.error = 'Failed to detect region';
       });

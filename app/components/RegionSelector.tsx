@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { GlobeAltIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { detectRegion, setRegion } from '../store/slices/regionSlice';
+import { initializeRegion, setRegion } from '../store/slices/regionSlice';
 import { countryNames } from '../utils/location';
 
 export default function RegionSelector() {
@@ -10,7 +10,7 @@ export default function RegionSelector() {
   const { region, loading } = useAppSelector((state) => state.region);
 
   useEffect(() => {
-    dispatch(detectRegion());
+    dispatch(initializeRegion());
   }, [dispatch]);
 
   return (
