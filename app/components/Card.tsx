@@ -47,7 +47,7 @@ export default function Card({
       to={`/details/${resolvedMediaType}/${id}`} 
       className={`block w-full relative ${isSlider ? 'pt-6 pb-8 px-3' : 'p-4'}`}
     >
-      <div className="relative group hover:scale-105 transition-transform duration-300">
+      <div className="relative transition-transform duration-300 group hover:scale-105">
         <div className={`relative aspect-[2/3] w-full rounded-xl overflow-hidden bg-gray-800 ${
           isSlider ? 'max-w-[200px] shadow-lg' : ''
         }`}>
@@ -57,7 +57,7 @@ export default function Card({
             className="object-cover w-full h-full"
           />
           {vote_average && (
-            <div className="absolute top-2 right-2 bg-gray-900/80 rounded-full px-2 py-1 z-20">
+            <div className="absolute z-20 px-2 py-1 rounded-full top-2 right-2 bg-gray-900/80">
               <span className="text-sm font-medium text-white">
                 {vote_average.toFixed(1)}
               </span>
@@ -65,10 +65,10 @@ export default function Card({
           )}
         </div>
         <div className={`mt-4 ${isSlider ? 'max-w-[200px]' : ''}`}>
-          <h3 className="text-white font-medium truncate text-sm font-heading">
+          <h3 className="text-sm font-medium text-white truncate font-heading">
             {title ?? name}
           </h3>
-          <div className="flex items-center gap-2 text-xs text-gray-400 mt-1 font-sans">
+          <div className="flex items-center gap-2 mt-1 font-sans text-xs text-gray-400">
             <span className="capitalize">{media_type}</span>
             <span>•</span>
             <span>{formatDate(release_date ?? first_air_date)}</span>

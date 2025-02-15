@@ -8,6 +8,7 @@ import {
 } from "react-router";
 import { Provider } from 'react-redux';
 import { store } from './store/store';
+import ScrollProvider from './providers/ScrollProvider';
 
 import type { Route } from "./+types/root";
 import "./styles/globals.css";
@@ -47,7 +48,9 @@ export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
 export default function App() {
   return (
     <Provider store={store}>
-      <Outlet />
+      <ScrollProvider>
+        <Outlet />
+      </ScrollProvider>
     </Provider>
   );
 }
