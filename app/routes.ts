@@ -8,5 +8,6 @@ export default [
   route("discover/tv", "routes/tv.tsx"),
   route("watchlist", "routes/watchlist.tsx"),
   route("people", "routes/people.tsx"),
+  route("people/:id", "routes/people/details.tsx"),
   route("details/:mediaType/:id", "routes/details.tsx"),
 ] satisfies RouteConfig;

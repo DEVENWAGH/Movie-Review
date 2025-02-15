@@ -52,9 +52,13 @@ const peopleSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchPeople.fulfilled, (state, action) => {
-        state.items = state.currentPage === 1 
-          ? action.payload.results 
-          : [...state.items, ...action.payload.results];
+        // Create a Set to track unique IDs
+        const uniqueIds = new Set(state.items.map(item => item.id));
+        
+        // Filter out duplicates from new results
+        const newItems = action.payload.results.filter(item => !uniqueIds.has(item.id));
+        
+        state.items = [...state.items, ...newItems];
         state.totalPages = action.payload.totalPages;
         state.currentPage += 1;
         state.loading = false;

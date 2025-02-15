@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Mousewheel, Keyboard } from 'swiper/modules';
+import { Navigation, FreeMode, Mousewheel, Keyboard } from 'swiper/modules';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import Card from './Card';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -10,6 +10,7 @@ import { setMediaType, fetchTrending, type MediaType } from '../store/slices/tre
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/mousewheel';
+import 'swiper/css/free-mode';
 
 interface SliderProps {
   title: string;
@@ -36,21 +37,21 @@ export default function Slider({ title, items, containerStyle = "bg-black" }: Re
   };
 
   return (
-    <div className={`py-10 group overflow-hidden rounded-2xl ${containerStyle}`}>
-      <div className="flex items-center justify-between mb-6 px-6">
+    <div className={`py-10 group ${containerStyle}`} onWheel={(e) => e.stopPropagation()}>
+      <div className="flex items-center justify-between px-6 mb-6">
         <div className="flex items-center gap-4">
           <h2 className="text-2xl font-bold text-white">{title}</h2>
           <div className="relative">
             <button
               onClick={() => setShowDropdown(!showDropdown)}
-              className="flex items-center gap-2 px-3 py-1 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-300"
+              className="flex items-center gap-2 px-3 py-1 text-gray-300 bg-gray-800 rounded-md hover:bg-gray-700"
             >
               {categories.find(cat => cat.value === mediaType)?.label}
               <ChevronDownIcon className="w-4 h-4" />
             </button>
             
             {showDropdown && (
-              <div className="absolute top-full mt-1 w-32 bg-gray-800 rounded-md shadow-lg z-30">
+              <div className="absolute z-30 w-32 mt-1 bg-gray-800 rounded-md shadow-lg top-full">
                 {categories.map(category => (
                   <button
                     key={category.value}
@@ -69,13 +70,13 @@ export default function Slider({ title, items, containerStyle = "bg-black" }: Re
         <div className="flex gap-2">
           <button
             onClick={() => swiperRef.current?.slidePrev()}
-            className="w-10 h-10 rounded-full bg-gray-800/80 hover:bg-gray-700 transition-colors flex items-center justify-center group-hover:opacity-100"
+            className="flex items-center justify-center w-10 h-10 transition-colors rounded-full bg-gray-800/80 hover:bg-gray-700 group-hover:opacity-100"
           >
             <ChevronLeftIcon className="w-6 h-6 text-white" />
           </button>
           <button
             onClick={() => swiperRef.current?.slideNext()}
-            className="w-10 h-10 rounded-full bg-gray-800/80 hover:bg-gray-700 transition-colors flex items-center justify-center group-hover:opacity-100"
+            className="flex items-center justify-center w-10 h-10 transition-colors rounded-full bg-gray-800/80 hover:bg-gray-700 group-hover:opacity-100"
           >
             <ChevronRightIcon className="w-6 h-6 text-white" />
           </button>
@@ -84,12 +85,27 @@ export default function Slider({ title, items, containerStyle = "bg-black" }: Re
       
       <div className="relative px-6">
         <Swiper
-          modules={[Navigation, Mousewheel, Keyboard]}
+          modules={[Navigation, FreeMode, Mousewheel, Keyboard]}
+          navigation
+          freeMode={{
+            enabled: true,
+            sticky: false,
+            momentumRatio: 0.5,
+            minimumVelocity: 0.02
+          }}
+          mousewheel={{
+            forceToAxis: true,
+            sensitivity: 1,
+            releaseOnEdges: true
+          }}
+          keyboard={{
+            enabled: true,
+            onlyInViewport: true
+          }}
           spaceBetween={32}
           slidesPerView="auto"
-          mousewheel
-          keyboard
-          className="!overflow-visible"
+          preventInteractionOnTransition={true}
+          className="!overflow-visible slider-container"
           wrapperClass="!items-stretch"
           onBeforeInit={(swiper) => {
             swiperRef.current = swiper;

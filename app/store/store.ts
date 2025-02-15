@@ -8,6 +8,7 @@ import discoverReducer from './slices/discoverSlice';
 import peopleReducer from './slices/peopleSlice';
 import detailsReducer from './slices/detailsSlice';
 import regionReducer from './slices/regionSlice';
+import peopleDetailsReducer from './slices/peopleDetailsSlice';
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     popular: popularReducer,
     discover: discoverReducer,
     people: peopleReducer,
+    peopleDetails: peopleDetailsReducer,
     details: detailsReducer,
     region: regionReducer,
   },
