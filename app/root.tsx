@@ -11,7 +11,7 @@ import { store } from './store/store';
 import ScrollProvider from './providers/ScrollProvider';
 import { useEffect } from 'react';
 import { initializeTMDB } from './services/authService';
-import { fetchWatchlist } from './store/slices/userActionsSlice'; // Add this import
+import { fetchWatchlist, fetchUserRatings } from './store/slices/userActionsSlice'; // Add this import
 
 import type { Route } from "./+types/root";
 import "./styles/globals.css";
@@ -50,10 +50,11 @@ export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
 
 export default function App() {
   useEffect(() => {
-    // Initialize TMDB and fetch watchlist
+    // Initialize app data
     Promise.all([
       initializeTMDB(),
-      store.dispatch(fetchWatchlist())
+      store.dispatch(fetchWatchlist()),
+      store.dispatch(fetchUserRatings())
     ]).catch(console.error);
   }, []);
 

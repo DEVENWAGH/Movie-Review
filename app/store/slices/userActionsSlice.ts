@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getUserRatings } from '../../services/tmdbApi';
 
 export const addToWatchlist = createAsyncThunk(
   'userActions/addToWatchlist',
@@ -66,6 +67,17 @@ export const fetchWatchlist = createAsyncThunk(
 
     const data = await response.json();
     return data.results || [];
+  }
+);
+
+export const fetchUserRatings = createAsyncThunk(
+  'userActions/fetchUserRatings',
+  async () => {
+    const ratings = await getUserRatings();
+    return ratings.map(item => ({
+      mediaId: item.id,
+      rating: Math.round(item.rating / 2) // Convert 10-point to 5-point scale
+    }));
   }
 );
 
@@ -139,6 +151,11 @@ const userActionsSlice = createSlice({
       .addCase(fetchWatchlist.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(fetchUserRatings.fulfilled, (state, action) => {
+        action.payload.forEach(({ mediaId, rating }) => {
+          state.ratings.set(mediaId, rating);
+        });
       });
   }
 });

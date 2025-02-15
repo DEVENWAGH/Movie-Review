@@ -65,7 +65,7 @@ export default function InfiniteGrid({
             </p>
           )
         }
-        className="grid grid-cols-2 gap-6 -mx-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 scrollbar-hide"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 justify-items-center" // Updated grid
         style={{ overflow: 'hidden' }}
       >
         {items.map((item, index) => (
