@@ -6,6 +6,8 @@ import trendingReducer from './slices/trendingSlice';
 import popularReducer from './slices/popularSlice';
 import discoverReducer from './slices/discoverSlice';
 import peopleReducer from './slices/peopleSlice';
+import detailsReducer from './slices/detailsSlice';
+import regionReducer from './slices/regionSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +18,8 @@ export const store = configureStore({
     popular: popularReducer,
     discover: discoverReducer,
     people: peopleReducer,
+    details: detailsReducer,
+    region: regionReducer,
   },
 });
 

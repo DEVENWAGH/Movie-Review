@@ -3,11 +3,11 @@ import { Link } from 'react-router';
 
 export default function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2">
-      <img 
-        src="/WatchWiseLogo.svg"
+    <Link to="/" className="flex items-center p-2 w-30 ">
+      <img
+        src="/action.svg"
         alt="WatchWise"
-        className="h-30 w-auto"
+        className="w-auto h-30"
       />
     </Link>
   );

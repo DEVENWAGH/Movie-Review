@@ -9,7 +9,6 @@ import {
     PhoneIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router";  // Updated import
-import Logo from './Logo';
 
 export function Sidebar() {
     const mainNav = [
@@ -29,12 +28,18 @@ export function Sidebar() {
     return (
         <aside className="w-64 min-h-screen bg-[#0A1625] text-white p-4">
             <div className="mb-8">
-                <Logo />
+                <Link to="/" className="flex items-center gap-2">
+                    <img
+                        src="/WatchWiseLogo.svg"
+                        alt="WatchWise"
+                        className="w-auto h-30"
+                    />
+                </Link>
             </div>
 
             <nav className="space-y-8">
                 <div>
-                    <h2 className="text-gray-400 text-sm font-semibold mb-4">DISCOVER</h2>
+                    <h2 className="mb-4 text-sm font-semibold text-gray-400">DISCOVER</h2>
                     <ul className="space-y-2">
                         {mainNav.map((item) => (
                             <li key={item.name}>
@@ -51,13 +56,13 @@ export function Sidebar() {
                 </div>
 
                 <div>
-                    <h2 className="text-gray-400 text-sm font-semibold mb-4">Website Information</h2>
+                    <h2 className="mb-4 text-sm font-semibold text-gray-400">Website Information</h2>
                     <ul className="space-y-2">
                         {bottomNav.map((item) => (
                             <li key={item.name}>
                                 <Link
                                     to={item.path}
-                                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+                                    className="flex items-center gap-3 px-3 py-2 transition-colors rounded-lg hover:bg-gray-800"
                                 >
                                     <item.icon className="w-5 h-5" />
                                     <span>{item.name}</span>

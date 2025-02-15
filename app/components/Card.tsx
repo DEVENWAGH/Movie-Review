@@ -12,6 +12,7 @@ interface CardProps {
   isTrending?: boolean;
   isSlider?: boolean;
   showFullDate?: boolean;
+  mediaType?: string; // Add this prop
 }
 
 export default function Card({
@@ -25,7 +26,11 @@ export default function Card({
   first_air_date,
   isSlider,
   showFullDate,
+  mediaType, // Add this prop
 }: Readonly<CardProps>) {
+  // Determine the correct media type
+  const resolvedMediaType = mediaType || media_type || (title ? 'movie' : 'tv');
+
   const formatDate = (date?: string) => {
     if (!date) return "";
     return showFullDate 
@@ -39,7 +44,7 @@ export default function Card({
 
   return (
     <Link 
-      to={`/details/${media_type}/${id}`} 
+      to={`/details/${resolvedMediaType}/${id}`} 
       className={`block w-full relative ${isSlider ? 'pt-6 pb-8 px-3' : 'p-4'}`}
     >
       <div className="relative group hover:scale-105 transition-transform duration-300">

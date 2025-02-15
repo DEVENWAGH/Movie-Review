@@ -14,9 +14,10 @@ import 'swiper/css/mousewheel';
 interface SliderProps {
   title: string;
   items: any[];
+  containerStyle?: string;
 }
 
-export default function Slider({ title, items }: Readonly<SliderProps>) {
+export default function Slider({ title, items, containerStyle = "bg-black" }: Readonly<SliderProps>) {
   const dispatch = useAppDispatch();
   const mediaType = useAppSelector(state => state.trending.mediaType);
   const [showDropdown, setShowDropdown] = React.useState(false);
@@ -35,7 +36,7 @@ export default function Slider({ title, items }: Readonly<SliderProps>) {
   };
 
   return (
-    <div className="py-10 group overflow-hidden rounded-2xl bg-black">
+    <div className={`py-10 group overflow-hidden rounded-2xl ${containerStyle}`}>
       <div className="flex items-center justify-between mb-6 px-6">
         <div className="flex items-center gap-4">
           <h2 className="text-2xl font-bold text-white">{title}</h2>
