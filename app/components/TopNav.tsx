@@ -15,6 +15,7 @@ import {
 } from "../store/slices/searchSlice";
 import RegionSelector from './RegionSelector';
 import Logo from './Logo';
+import { initNavAnimations } from '../utils/animations';
 
 export default function TopNav() {
   const location = useLocation();
@@ -32,6 +33,10 @@ export default function TopNav() {
     return () => clearTimeout(debounceTimer);
   }, [query, dispatch]);
 
+  useEffect(() => {
+    initNavAnimations();
+  }, []);
+
   const getMediaTypeStyle = (mediaType: string) => {
     switch (mediaType) {
       case 'movie':
@@ -44,15 +49,15 @@ export default function TopNav() {
   };
 
   return (
-    <nav className="bg-[#0A1625] border-b border-gray-800 backdrop-blur-sm bg-opacity-90">
+    <nav className="nav-container bg-[#0A1625] border-b border-gray-800 backdrop-blur-sm bg-opacity-90">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center flex-1 gap-8">
             {/* Only show Logo on details page */}
-            {isDetailsPage && <Logo />}
+            {isDetailsPage && <div className="sidebar-logo"><Logo /></div>}
             
             {/* Search Bar Container - Updated width */}
-            <div className="relative flex-1 max-w-3xl">
+            <div className="search-container relative flex-1 max-w-3xl">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <MagnifyingGlassIcon className="w-5 h-5 text-gray-400" />
@@ -138,30 +143,24 @@ export default function TopNav() {
 
           {/* Right side navigation */}
           <div className="flex items-center space-x-4">
-            <RegionSelector />
-            
-            {/* Watchlist */}
-            <Link
-              to="/watchlist"
-              className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]"
-            >
-              <BookmarkIcon className="w-6 h-6" />
-            </Link>
-
-            {/* Notifications */}
-            <button
-              type="button"
-              className="p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]"
-            >
-              <BellIcon className="w-6 h-6" />
-            </button>
-
-            {/* User Avatar */}
-            <Link to="/profile" className="flex items-center">
-              <div className="flex items-center justify-center w-8 h-8 text-sm font-medium text-white bg-gray-700 rounded-full">
-                U
-              </div>
-            </Link>
+            {[
+              <RegionSelector key="region" />,
+              <Link key="watchlist" to="/watchlist" className="nav-items p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]">
+                <BookmarkIcon className="w-6 h-6" />
+              </Link>,
+              <button
+                key="notifications"
+                type="button"
+                className="nav-items p-2 rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]"
+              >
+                <BellIcon className="w-6 h-6" />
+              </button>,
+              <Link key="profile" to="/profile" className="nav-items flex items-center">
+                <div className="flex items-center justify-center w-8 h-8 text-sm font-medium text-white bg-gray-700 rounded-full">
+                  U
+                </div>
+              </Link>
+            ]}
           </div>
         </div>
       </div>

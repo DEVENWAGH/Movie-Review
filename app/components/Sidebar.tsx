@@ -9,8 +9,14 @@ import {
     PhoneIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router";  // Updated import
+import { useEffect } from 'react';
+import { initSidebarAnimations } from '../utils/animations';
 
 export function Sidebar() {
+    useEffect(() => {
+        initSidebarAnimations();
+    }, []);
+
     const mainNav = [
         { name: "Trending", icon: FireIcon, path: "/trending" },
         { name: "Popular", icon: ChartBarIcon, path: "/popular" },
@@ -26,8 +32,8 @@ export function Sidebar() {
     ];
 
     return (
-        <aside className="w-64 min-h-screen bg-[#0A1625] text-white p-4">
-            <div className="mb-8">
+        <aside className="sidebar-container w-64 min-h-screen bg-[#0A1625] text-white p-4">
+            <div className="mb-8 sidebar-logo">
                 <Link to="/" className="flex items-center gap-2">
                     <img
                         src="/WatchWiseLogo.svg"
@@ -38,7 +44,7 @@ export function Sidebar() {
             </div>
 
             <nav className="space-y-8">
-                <div>
+                <div className="nav-group">
                     <h2 className="mb-4 text-sm font-semibold text-gray-400">DISCOVER</h2>
                     <ul className="space-y-2">
                         {mainNav.map((item) => (
@@ -55,7 +61,7 @@ export function Sidebar() {
                     </ul>
                 </div>
 
-                <div>
+                <div className="nav-group">
                     <h2 className="mb-4 text-sm font-semibold text-gray-400">Website Information</h2>
                     <ul className="space-y-2">
                         {bottomNav.map((item) => (
