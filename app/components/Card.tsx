@@ -29,7 +29,7 @@ export default function Card({
   mediaType, // Add this prop
 }: Readonly<CardProps>) {
   // Determine the correct media type
-  const resolvedMediaType = mediaType || media_type || (title ? 'movie' : 'tv');
+  const resolvedMediaType = mediaType ?? media_type ?? (title ? 'movie' : 'tv');
 
   const formatDate = (date?: string) => {
     if (!date) return "";
@@ -53,7 +53,7 @@ export default function Card({
         }`}>
           <img
             src={`https://image.tmdb.org/t/p/w300${poster_path}`}
-            alt={title || name}
+            alt={title ?? name}
             className="object-cover w-full h-full"
           />
           {vote_average && (
@@ -66,12 +66,12 @@ export default function Card({
         </div>
         <div className={`mt-4 ${isSlider ? 'max-w-[200px]' : ''}`}>
           <h3 className="text-white font-medium truncate text-sm font-heading">
-            {title || name}
+            {title ?? name}
           </h3>
           <div className="flex items-center gap-2 text-xs text-gray-400 mt-1 font-sans">
             <span className="capitalize">{media_type}</span>
             <span>•</span>
-            <span>{formatDate(release_date || first_air_date)}</span>
+            <span>{formatDate(release_date ?? first_air_date)}</span>
           </div>
         </div>
       </div>

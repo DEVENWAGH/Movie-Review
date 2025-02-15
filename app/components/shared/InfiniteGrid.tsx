@@ -51,7 +51,7 @@ export default function InfiniteGrid({
           <div key={item.id} className="relative">
             <Card 
               {...item} 
-              mediaType={mediaType || item.media_type}
+              mediaType={mediaType ?? item.media_type}
               showFullDate={showFullDate}
             />
           </div>

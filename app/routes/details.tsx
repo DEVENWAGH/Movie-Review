@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import type { MouseEvent as ReactMouseEvent } from "react"; // Fix MouseEvent import
 import { useParams, useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { fetchDetails, resetDetails } from "../store/slices/detailsSlice";
@@ -9,7 +10,7 @@ import TranslationsList from "../components/TranslationsList";
 import TrailerButton from "../components/TrailerButton";
 import SimpleSlider from "../components/SimpleSlider";
 import VideoPlayer from '../components/VideoPlayer';
-import { PlayIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/outline"; // Remove XMarkIcon
 
 export default function Details() {
   const { mediaType, id } = useParams();
@@ -26,7 +27,6 @@ export default function Details() {
     loading,
     recommendations,
   } = useAppSelector((state) => state.details);
-  const [showTrailer, setShowTrailer] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
 
   useEffect(() => {
@@ -85,6 +85,11 @@ export default function Details() {
 
     return trailer;
   }, [videos]);
+
+  const handleVideoClick = (videoKey: string) => (event: ReactMouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setSelectedVideo(videoKey);
+  };
 
   // Show loading state
   if (loading) {
@@ -317,7 +322,11 @@ export default function Details() {
                         </h2>
                         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                           {typeVideos.map((video: any) => (
-                            <div key={video.id} className="cursor-pointer group" onClick={() => setSelectedVideo(video.key)}>
+                            <button 
+                              key={video.id} 
+                              className="w-full text-left cursor-pointer group" 
+                              onClick={handleVideoClick(video.key)}
+                            >
                               <div className="relative overflow-hidden bg-gray-800 rounded-xl aspect-video">
                                 <img
                                   src={`https://img.youtube.com/vi/${video.key}/maxresdefault.jpg`}
@@ -329,7 +338,7 @@ export default function Details() {
                                 </div>
                               </div>
                               <h3 className="mt-3 text-sm font-medium text-gray-300">{video.name}</h3>
-                            </div>
+                            </button>
                           ))}
                         </div>
                       </div>

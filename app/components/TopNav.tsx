@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import {
   MagnifyingGlassIcon,
   BellIcon,
   XMarkIcon,
   FilmIcon,
   BookmarkIcon,
-  GlobeAltIcon,
-  ChevronDownIcon,
 } from "@heroicons/react/24/outline";
-import { Link, useLocation } from "react-router"; // Updated import
+import { Link, useLocation } from "react-router";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setQuery,
   clearSearch,
   searchMulti,
 } from "../store/slices/searchSlice";
-import { setLanguage } from "../store/slices/languageSlice";
 import RegionSelector from './RegionSelector';
 import Logo from './Logo';
 
@@ -23,15 +20,7 @@ export default function TopNav() {
   const location = useLocation();
   const isDetailsPage = location.pathname.startsWith('/details/');
   const dispatch = useAppDispatch();
-  const { query, results, loading } = useAppSelector((state) => state.search);
-  const { currentLanguage } = useAppSelector((state) => state.language);
-  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-  const languages = [
-    { code: "en", label: "English" },
-    { code: "es", label: "Español" },
-    { code: "fr", label: "Français" },
-    { code: "hi", label: "Hindi" },
-  ];
+  const { query, results } = useAppSelector((state) => state.search);
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -43,11 +32,22 @@ export default function TopNav() {
     return () => clearTimeout(debounceTimer);
   }, [query, dispatch]);
 
+  const getMediaTypeStyle = (mediaType: string) => {
+    switch (mediaType) {
+      case 'movie':
+        return 'bg-blue-900 text-blue-200';
+      case 'tv':
+        return 'bg-green-900 text-green-200';
+      default:
+        return 'bg-purple-900 text-purple-200';
+    }
+  };
+
   return (
     <nav className="bg-[#0A1625] border-b border-gray-800">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-8 flex-1">
+          <div className="flex items-center flex-1 gap-8">
             {/* Only show Logo on details page */}
             {isDetailsPage && <Logo />}
             
@@ -84,7 +84,7 @@ export default function TopNav() {
                       className="flex items-center px-4 py-3 transition-colors hover:bg-gray-700"
                     >
                       {/* Poster/Profile Image */}
-                      {s.poster_path || s.profile_path ? (
+                      {s.poster_path ?? s.profile_path ? (
                         <div
                           className={`relative overflow-hidden rounded ${
                             s.media_type === "person" ? "w-12 h-12" : "w-12 h-16"
@@ -92,9 +92,9 @@ export default function TopNav() {
                         >
                           <img
                             src={`https://image.tmdb.org/t/p/w92${
-                              s.poster_path || s.profile_path
+                              s.poster_path ?? s.profile_path
                             }`}
-                            alt={s.title || s.name}
+                            alt={s.title ?? s.name}
                             className="absolute inset-0 object-cover w-full h-full"
                           />
                         </div>
@@ -111,21 +111,10 @@ export default function TopNav() {
                       {/* Title and Media Type */}
                       <div className="flex-1 ml-3">
                         <p className="text-sm font-medium text-white">
-                          {s.title || s.name}
+                          {s.title ?? s.name}
                         </p>
                         <div className="flex items-center mt-1 mb-1">
-                          <span
-                            className={`
-                          px-2 py-0.5 rounded text-xs
-                          ${
-                            s.media_type === "movie"
-                              ? "bg-blue-900 text-blue-200"
-                              : s.media_type === "tv"
-                              ? "bg-green-900 text-green-200"
-                              : "bg-purple-900 text-purple-200"
-                          }
-                        `}
-                          >
+                          <span className={`px-2 py-0.5 rounded text-xs ${getMediaTypeStyle(s.media_type)}`}>
                             {s.media_type?.toUpperCase()}
                           </span>
                         </div>
@@ -150,36 +139,7 @@ export default function TopNav() {
           {/* Right side navigation */}
           <div className="flex items-center space-x-4">
             <RegionSelector />
-            {/* Language Selector */}
-            <div className="relative">
-              <button
-                onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                className="flex items-center space-x-1 p-2 rounded-md text-gray-400 hover:text-white hover:bg-[#1A2737]"
-              >
-                <GlobeAltIcon className="w-5 h-5" />
-                <ChevronDownIcon className="w-4 h-4" />
-              </button>
-
-              {showLanguageMenu && (
-                <div className="absolute right-0 mt-2 w-48 bg-[#1A2737] rounded-md shadow-lg z-50 border border-gray-700">
-                  <div className="py-1">
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        className="w-full px-4 py-2 text-sm text-left text-gray-300 hover:bg-gray-700 hover:text-white"
-                        onClick={() => {
-                          dispatch(setLanguage(lang.code));
-                          setShowLanguageMenu(false);
-                        }}
-                      >
-                        {lang.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
+            
             {/* Watchlist */}
             <Link
               to="/watchlist"

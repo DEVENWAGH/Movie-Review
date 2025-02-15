@@ -31,11 +31,11 @@ const initialState: DetailsState = {
   recommendations: [],
 };
 
-export const fetchDetails = createAsyncThunk(
+export const fetchDetails = createAsyncThunk<any, FetchDetailsParams>(
   'details/fetchDetails',
   async ({ mediaType, id }, { getState }) => {
     try {
-      const state = getState();
+      const state = getState() as RootState;
       const region = state.region.region;
 
       const [details, credits, similar, hindiVideos, englishVideos, providers, translations, recommendations] = await Promise.all([
