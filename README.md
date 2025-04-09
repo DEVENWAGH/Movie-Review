@@ -1,4 +1,4 @@
-# Welcome to React Router!
+# Movie-Review Application
 
 A modern, production-ready template for building full-stack React applications using React Router.
 
@@ -90,6 +90,29 @@ Make sure to deploy the output of `npm run build`
 │   ├── client/    # Static assets
 │   └── server/    # Server-side code
 ```
+
+### Deployment to Vercel
+
+#### Prerequisites
+
+1. Create a Vercel account if you don't have one: https://vercel.com/signup
+2. Install the Vercel CLI: `npm i -g vercel`
+
+#### Environment Variables
+
+Before deploying, make sure to set the following environment variables in your Vercel project:
+
+- `VITE_TMDB_API_KEY`: Your TMDB API key
+- `VITE_TMDB_ACCESS_TOKEN`: Your TMDB access token
+- `VITE_TMDB_ACCOUNT_ID`: Your TMDB account ID
+
+#### Deployment Steps
+
+1. Login to Vercel CLI: `vercel login`
+2. Deploy the application: `vercel`
+3. Follow the CLI instructions to complete the deployment
+
+Alternatively, you can deploy directly from GitHub by connecting your repository to Vercel.
 
 ## Styling
 

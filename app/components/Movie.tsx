@@ -1,11 +1,15 @@
-// ...existing imports...
-
 export default function Movie() {
-  // ...existing code...
+  // Add error handling for sections
+  if (!sections || sections.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#0A1625]">
+        <p className="text-xl text-white">No movie data available</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0A1625]">
-      {/* ...existing divs... */}
       {sections.map((section, sectionIndex) => (
         <Slider
           key={`${section.title}-${sectionIndex}`}
@@ -13,7 +17,6 @@ export default function Movie() {
           items={section.items}
         />
       ))}
-      {/* ...existing divs... */}
     </div>
   );
 }
