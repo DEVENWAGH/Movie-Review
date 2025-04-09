@@ -3,10 +3,10 @@ import * as path from "path";
 import * as fs from "fs";
 
 // Cache the build to avoid repeated imports
-let buildCache;
+let buildCache: any = undefined;
 
 // Dynamically import the build output
-async function loadBuild() {
+async function loadBuild(): Promise<any> {
   if (buildCache) return buildCache;
   
   const possiblePaths = [
@@ -36,7 +36,7 @@ async function loadBuild() {
   throw new Error(`Could not find server build in any of the expected locations`);
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any): Promise<any> {
   try {
     // Log request information for debugging
     console.log(`Handling ${req.method} request to ${req.url}`);
