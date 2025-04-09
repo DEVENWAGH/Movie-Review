@@ -1,4 +1,5 @@
 {
+  "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "build",
   "framework": "vite",
@@ -9,10 +10,19 @@
       "includeFiles": "build/**"
     }
   },
+  "builds": [
+    {
+      "src": "api/server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["build/**"]
+      }
+    }
+  ],
   "routes": [
     {
       "src": "/assets/(.*)",
-      "dest": "/client/assets/$1",
+      "dest": "/build/client/assets/$1",
       "headers": {
         "cache-control": "public, max-age=31536000, immutable"
       }
@@ -28,5 +38,8 @@
       "src": "/(.*)",
       "dest": "/api/server.js"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
