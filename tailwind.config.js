@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  // ...existing config...
   theme: {
     extend: {
       fontFamily: {
@@ -9,5 +8,4 @@ export default {
       },
     },
   },
-  // ...rest of config...
 }

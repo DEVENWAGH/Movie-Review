@@ -3,13 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "react-router build",
-    "dev": "react-router dev",
-    "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@react-router/node": "^7.1.5",
+    "@react-router/serve": "^7.1.5",
     "@reduxjs/toolkit": "^2.5.1",
     "axios": "^1.7.9",
     "gsap": "^3.12.7",
