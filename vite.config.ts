@@ -7,5 +7,9 @@ export default defineConfig({
   plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
   build: {
     outDir: 'build',
+    sourcemap: true
   },
+  server: {
+    host: '0.0.0.0'
+  }
 });
