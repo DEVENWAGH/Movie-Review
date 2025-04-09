@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router';
+import React from "react";
+import { Link } from "react-router-dom";
 
 interface PersonCardProps {
   id: number;
@@ -12,9 +12,15 @@ interface PersonCardProps {
   }>;
 }
 
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
-const PLACEHOLDER_IMAGE = '/logo.svg';
-export default function PersonCard({ id, profile_path, name, known_for_department, known_for }: Readonly<PersonCardProps>) {
+const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500";
+const PLACEHOLDER_IMAGE = "/logo.svg";
+export default function PersonCard({
+  id,
+  profile_path,
+  name,
+  known_for_department,
+  known_for,
+}: Readonly<PersonCardProps>) {
   const imageUrl = profile_path
     ? `${IMAGE_BASE_URL}${profile_path}`
     : PLACEHOLDER_IMAGE;
@@ -37,7 +43,11 @@ export default function PersonCard({ id, profile_path, name, known_for_departmen
           <h3 className="mb-1 text-lg font-semibold text-white">{name}</h3>
           <p className="mb-2 text-sm text-gray-400">{known_for_department}</p>
           <p className="text-sm text-gray-500">
-            Known for: {known_for.map(item => item.title || item.name).slice(0, 2).join(', ')}
+            Known for:{" "}
+            {known_for
+              .map((item) => item.title || item.name)
+              .slice(0, 2)
+              .join(", ")}
           </p>
         </div>
       </div>

@@ -6,19 +6,19 @@ import {
   FilmIcon,
   BookmarkIcon,
 } from "@heroicons/react/24/outline";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation } from "react-router-dom"; // Updated from "react-router" to "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import {
   setQuery,
   clearSearch,
   searchMulti,
 } from "../store/slices/searchSlice";
-import RegionSelector from './RegionSelector';
-import Logo from './Logo';
+import RegionSelector from "./RegionSelector";
+import Logo from "./Logo";
 
 export default function TopNav() {
   const location = useLocation();
-  const isDetailsPage = location.pathname.startsWith('/details/');
+  const isDetailsPage = location.pathname.startsWith("/details/");
   const dispatch = useAppDispatch();
   const { query, results } = useAppSelector((state) => state.search);
 
@@ -32,15 +32,14 @@ export default function TopNav() {
     return () => clearTimeout(debounceTimer);
   }, [query, dispatch]);
 
-  
   const getMediaTypeStyle = (mediaType: string) => {
     switch (mediaType) {
-      case 'movie':
-        return 'bg-blue-900 text-blue-200';
-      case 'tv':
-        return 'bg-green-900 text-green-200';
+      case "movie":
+        return "bg-blue-900 text-blue-200";
+      case "tv":
+        return "bg-green-900 text-green-200";
       default:
-        return 'bg-purple-900 text-purple-200';
+        return "bg-purple-900 text-purple-200";
     }
   };
 
@@ -52,7 +51,7 @@ export default function TopNav() {
 
     // If we're at the top or bottom of the search results, don't prevent default
     if (
-      (scrollTop === 0 && e.deltaY < 0) || 
+      (scrollTop === 0 && e.deltaY < 0) ||
       (scrollTop + clientHeight >= scrollHeight && e.deltaY > 0)
     ) {
       return;
@@ -63,10 +62,10 @@ export default function TopNav() {
   };
 
   return (
-    <motion.nav 
+    <motion.nav
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ 
+      transition={{
         duration: 3, // Increased from 2 to 4 seconds
         ease: [0.16, 1, 0.3, 1],
       }}
@@ -78,7 +77,7 @@ export default function TopNav() {
             {/* Logo with animation */}
             <AnimatePresence mode="wait">
               {isDetailsPage && (
-                <motion.div 
+                <motion.div
                   key="logo"
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -90,15 +89,15 @@ export default function TopNav() {
                 </motion.div>
               )}
             </AnimatePresence>
-            
+
             {/* Search Bar Container */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ 
-                duration: 1.2, 
+              transition={{
+                duration: 1.2,
                 delay: 0.8,
-                ease: [0.16, 1, 0.3, 1]
+                ease: [0.16, 1, 0.3, 1],
               }}
               className="relative flex-1 max-w-3xl search-container"
             >
@@ -145,7 +144,9 @@ export default function TopNav() {
                         {s.poster_path ?? s.profile_path ? (
                           <div
                             className={`relative overflow-hidden rounded ${
-                              s.media_type === "person" ? "w-12 h-12" : "w-12 h-16"
+                              s.media_type === "person"
+                                ? "w-12 h-12"
+                                : "w-12 h-16"
                             }`}
                           >
                             <img
@@ -159,7 +160,9 @@ export default function TopNav() {
                         ) : (
                           <div
                             className={`bg-gray-700 rounded flex items-center justify-center ${
-                              s.media_type === "person" ? "w-12 h-12" : "w-12 h-16"
+                              s.media_type === "person"
+                                ? "w-12 h-12"
+                                : "w-12 h-16"
                             }`}
                           >
                             <FilmIcon className="w-6 h-6 text-gray-400" />
@@ -172,7 +175,11 @@ export default function TopNav() {
                             {s.title ?? s.name}
                           </p>
                           <div className="flex items-center mt-1 mb-1">
-                            <span className={`px-2 py-0.5 rounded text-xs ${getMediaTypeStyle(s.media_type)}`}>
+                            <span
+                              className={`px-2 py-0.5 rounded text-xs ${getMediaTypeStyle(
+                                s.media_type
+                              )}`}
+                            >
                               {s.media_type?.toUpperCase()}
                             </span>
                           </div>
@@ -181,11 +188,12 @@ export default function TopNav() {
                               {s.overview}
                             </p>
                           )}
-                          {s.media_type === "person" && s.known_for_department && (
-                            <p className="text-xs text-gray-400">
-                              {s.known_for_department}
-                            </p>
-                          )}
+                          {s.media_type === "person" &&
+                            s.known_for_department && (
+                              <p className="text-xs text-gray-400">
+                                {s.known_for_department}
+                              </p>
+                            )}
                         </div>
                       </Link>
                     ))}
@@ -202,10 +210,10 @@ export default function TopNav() {
                 key="region"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ 
+                transition={{
                   duration: 1,
                   delay: 1,
-                  ease: [0.16, 1, 0.3, 1]
+                  ease: [0.16, 1, 0.3, 1],
                 }}
               >
                 <RegionSelector />
@@ -214,14 +222,14 @@ export default function TopNav() {
                 key="watchlist"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ 
+                transition={{
                   duration: 1,
                   delay: 1.2,
-                  ease: [0.16, 1, 0.3, 1]
+                  ease: [0.16, 1, 0.3, 1],
                 }}
               >
-                <Link 
-                  to="/watchlist" 
+                <Link
+                  to="/watchlist"
                   className="flex items-center justify-center w-10 h-10 transition-colors rounded-full text-gray-400 hover:text-white hover:bg-[#1A2737]"
                 >
                   <BookmarkIcon className="w-5 h-5" />
@@ -231,10 +239,10 @@ export default function TopNav() {
                 key="profile"
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ 
+                transition={{
                   duration: 1,
                   delay: 3.8,
-                  ease: [0.16, 1, 0.3, 1]
+                  ease: [0.16, 1, 0.3, 1],
                 }}
               >
                 <Link to="/profile" className="flex items-center nav-items">
@@ -242,7 +250,7 @@ export default function TopNav() {
                     U
                   </div>
                 </Link>
-              </motion.div>
+              </motion.div>,
             ]}
           </div>
         </div>

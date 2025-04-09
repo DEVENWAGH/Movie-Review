@@ -1,12 +1,12 @@
-import React, { useRef } from 'react';
-import { Link } from 'react-router';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, FreeMode, Mousewheel, Keyboard } from 'swiper/modules';
+import React, { useRef } from "react";
+import { Link } from "react-router-dom"; // Updated from "react-router" to "react-router-dom"
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, FreeMode, Mousewheel, Keyboard } from "swiper/modules";
 
 // Import Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/free-mode';
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/free-mode";
 
 interface CastingMoviesSliderProps {
   items: Array<{
@@ -21,14 +21,19 @@ interface CastingMoviesSliderProps {
   }>;
 }
 
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w300';
-const PLACEHOLDER_IMAGE = '/logo.svg';
+const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w300";
+const PLACEHOLDER_IMAGE = "/logo.svg";
 
-export default function CastingMoviesSlider({ items }: Readonly<CastingMoviesSliderProps>) {
+export default function CastingMoviesSlider({
+  items,
+}: Readonly<CastingMoviesSliderProps>) {
   const swiperRef = useRef(null);
 
   return (
-    <div className="casting-slider-container" onWheel={(e) => e.stopPropagation()}>
+    <div
+      className="casting-slider-container"
+      onWheel={(e) => e.stopPropagation()}
+    >
       <Swiper
         ref={swiperRef}
         modules={[Navigation, FreeMode, Mousewheel, Keyboard]}
@@ -38,16 +43,16 @@ export default function CastingMoviesSlider({ items }: Readonly<CastingMoviesSli
           sticky: false,
           momentum: true,
           momentumRatio: 0.8,
-          momentumBounce: false
+          momentumBounce: false,
         }}
         mousewheel={{
           forceToAxis: true,
           sensitivity: 1,
-          releaseOnEdges: true
+          releaseOnEdges: true,
         }}
         keyboard={{
           enabled: true,
-          onlyInViewport: true
+          onlyInViewport: true,
         }}
         touchEventsTarget="container"
         touchRatio={1.5}
@@ -60,12 +65,22 @@ export default function CastingMoviesSlider({ items }: Readonly<CastingMoviesSli
         className="casting-slider"
       >
         {items.map((item) => (
-          <SwiperSlide key={`${item.id}-${item.character}`} className="!w-[200px] h-auto">
-            <Link to={`/details/${item.media_type}/${item.id}`} className="block h-full">
+          <SwiperSlide
+            key={`${item.id}-${item.character}`}
+            className="!w-[200px] h-auto"
+          >
+            <Link
+              to={`/details/${item.media_type}/${item.id}`}
+              className="block h-full"
+            >
               <div className="bg-[#1A2737] rounded-lg overflow-hidden h-full flex flex-col">
                 <div className="aspect-[2/3] relative flex-shrink-0">
                   <img
-                    src={item.poster_path ? `${IMAGE_BASE_URL}${item.poster_path}` : PLACEHOLDER_IMAGE}
+                    src={
+                      item.poster_path
+                        ? `${IMAGE_BASE_URL}${item.poster_path}`
+                        : PLACEHOLDER_IMAGE
+                    }
                     alt={item.title || item.name}
                     className="object-cover w-full h-full"
                     onError={(e) => {
@@ -89,10 +104,14 @@ export default function CastingMoviesSlider({ items }: Readonly<CastingMoviesSli
                   </div>
                   <div className="flex items-center justify-between w-full pt-2 border-t border-gray-700">
                     <p className="text-xs text-gray-500">
-                      {(item.release_date || item.first_air_date)?.split('-')[0]}
+                      {
+                        (item.release_date || item.first_air_date)?.split(
+                          "-"
+                        )[0]
+                      }
                     </p>
                     <span className="px-2 py-1 text-xs text-gray-400 bg-gray-800 rounded-full">
-                      {item.media_type === 'tv' ? 'TV Show' : 'Movie'}
+                      {item.media_type === "tv" ? "TV Show" : "Movie"}
                     </span>
                   </div>
                 </div>

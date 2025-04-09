@@ -1,6 +1,6 @@
-import React from 'react';
-import Discover from '../components/Discover';
-import Layout from '../components/shared/Layout';
+import React from "react";
+import Discover from "../components/Discover"; // Fixed path from "../app/components/Discover"
+import Layout from "../components/shared/Layout"; // Fixed path
 
 export default function Movie() {
   return (

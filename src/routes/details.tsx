@@ -1,16 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
-import type { MouseEvent as ReactMouseEvent } from "react"; // Fix MouseEvent import
-import { useParams, useNavigate } from "react-router";
+import type { MouseEvent as ReactMouseEvent } from "react";
+import { useParams, useNavigate } from "react-router-dom"; // Updated from "react-router" to "react-router-dom"
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { fetchDetails, resetDetails } from "../store/slices/detailsSlice";
-import TopNav from "../components/TopNav";
-import Slider from "../components/Slider";
-import WatchProviders from "../components/WatchProviders";
-import TranslationsList from "../components/TranslationsList";
-import TrailerButton from "../components/TrailerButton";
-import SimpleSlider from "../components/SimpleSlider";
-import VideoPlayer from '../components/VideoPlayer';
-import { PlayIcon } from "@heroicons/react/24/outline"; // Remove XMarkIcon
+import TopNav from "../components/TopNav"; // Fixed path from "../app/components/TopNav"
+import Slider from "../components/Slider"; // Fixed path
+import WatchProviders from "../components/WatchProviders"; // Fixed path
+import TranslationsList from "../components/TranslationsList"; // Fixed path
+import TrailerButton from "../components/TrailerButton"; // Fixed path
+import SimpleSlider from "../components/SimpleSlider"; // Fixed path
+import VideoPlayer from "../components/VideoPlayer"; // Fixed path
+import { PlayIcon } from "@heroicons/react/24/outline";
 
 export default function Details() {
   const { mediaType, id } = useParams();
@@ -61,35 +61,34 @@ export default function Details() {
 
   const mainTrailer = useMemo(() => {
     if (!videos?.length) return null;
-    
+
     // First try to find an official trailer
-    let trailer = videos.find(video => 
-      video.type === "Trailer" && 
-      video.site === "YouTube" &&
-      video.official
+    let trailer = videos.find(
+      (video) =>
+        video.type === "Trailer" && video.site === "YouTube" && video.official
     );
 
     // If no official trailer, try any trailer
     if (!trailer) {
-      trailer = videos.find(video => 
-        video.type === "Trailer" && 
-        video.site === "YouTube"
+      trailer = videos.find(
+        (video) => video.type === "Trailer" && video.site === "YouTube"
       );
     }
 
-    console.log('Selected Trailer:', {
+    console.log("Selected Trailer:", {
       name: trailer?.name,
       language: trailer?.iso_639_1,
-      isOfficial: trailer?.official
+      isOfficial: trailer?.official,
     });
 
     return trailer;
   }, [videos]);
 
-  const handleVideoClick = (videoKey: string) => (event: ReactMouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    setSelectedVideo(videoKey);
-  };
+  const handleVideoClick =
+    (videoKey: string) => (event: ReactMouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      setSelectedVideo(videoKey);
+    };
 
   // Show loading state
   if (loading) {
@@ -174,10 +173,7 @@ export default function Details() {
                         {details.production_companies.map(
                           (company: any) =>
                             company.logo_path && (
-                              <div
-                                key={company.id}
-                                className="relative group"
-                              >
+                              <div key={company.id} className="relative group">
                                 <img
                                   src={`https://image.tmdb.org/t/p/w200${company.logo_path}`}
                                   alt={company.name}
@@ -237,9 +233,9 @@ export default function Details() {
                     </p>
 
                     {mainTrailer && (
-                      <TrailerButton 
-                        trailer={mainTrailer} 
-                        onClick={() => setSelectedVideo(mainTrailer.key)} 
+                      <TrailerButton
+                        trailer={mainTrailer}
+                        onClick={() => setSelectedVideo(mainTrailer.key)}
                       />
                     )}
                   </div>
@@ -315,34 +311,38 @@ export default function Details() {
               {Object.keys(categorizedVideos).length > 0 && (
                 <section className="py-20 border-b border-gray-800">
                   <div className="container px-4 mx-auto">
-                    {Object.entries(categorizedVideos).map(([type, typeVideos]) => (
-                      <div key={type} className="mb-12 last:mb-0">
-                        <h2 className="mb-6 text-2xl font-bold text-white font-outfit">
-                          {type}s
-                        </h2>
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                          {typeVideos.map((video: any) => (
-                            <button 
-                              key={video.id} 
-                              className="w-full text-left cursor-pointer group" 
-                              onClick={handleVideoClick(video.key)}
-                            >
-                              <div className="relative overflow-hidden bg-gray-800 rounded-xl aspect-video">
-                                <img
-                                  src={`https://img.youtube.com/vi/${video.key}/maxresdefault.jpg`}
-                                  alt={video.name}
-                                  className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center transition-opacity opacity-0 bg-black/50 group-hover:opacity-100">
-                                  <PlayIcon className="w-16 h-16 text-white" />
+                    {Object.entries(categorizedVideos).map(
+                      ([type, typeVideos]) => (
+                        <div key={type} className="mb-12 last:mb-0">
+                          <h2 className="mb-6 text-2xl font-bold text-white font-outfit">
+                            {type}s
+                          </h2>
+                          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            {typeVideos.map((video: any) => (
+                              <button
+                                key={video.id}
+                                className="w-full text-left cursor-pointer group"
+                                onClick={handleVideoClick(video.key)}
+                              >
+                                <div className="relative overflow-hidden bg-gray-800 rounded-xl aspect-video">
+                                  <img
+                                    src={`https://img.youtube.com/vi/${video.key}/maxresdefault.jpg`}
+                                    alt={video.name}
+                                    className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
+                                  />
+                                  <div className="absolute inset-0 flex items-center justify-center transition-opacity opacity-0 bg-black/50 group-hover:opacity-100">
+                                    <PlayIcon className="w-16 h-16 text-white" />
+                                  </div>
                                 </div>
-                              </div>
-                              <h3 className="mt-3 text-sm font-medium text-gray-300">{video.name}</h3>
-                            </button>
-                          ))}
+                                <h3 className="mt-3 text-sm font-medium text-gray-300">
+                                  {video.name}
+                                </h3>
+                              </button>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 </section>
               )}
