@@ -9,9 +9,4 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
   ],
-  resolve: {
-    alias: {
-      'motion/react': 'framer-motion'
-    }
-  }
 });

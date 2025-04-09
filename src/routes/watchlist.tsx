@@ -1,6 +1,5 @@
-import React from "react";
 import { useEffect } from "react";
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 import { useAppDispatch, useAppSelector } from "../store/hooks";
 import { fetchWatchlist } from "../store/slices/userActionsSlice";
 import Card from "../components/Card";

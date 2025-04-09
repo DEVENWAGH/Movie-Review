@@ -12,6 +12,7 @@ import detailsReducer from './slices/detailsSlice';
 import regionReducer from './slices/regionSlice';
 import peopleDetailsReducer from './slices/peopleDetailsSlice';
 import userActionsReducer from './slices/userActionsSlice';
+import featuredReducer from './slices/featuredSlice';
 
 // Enable MapSet support
 enableMapSet();
@@ -28,7 +29,8 @@ export const store = configureStore({
     peopleDetails: peopleDetailsReducer,
     details: detailsReducer,
     region: regionReducer,
-    userActions: userActionsReducer
+    userActions: userActionsReducer,
+    featured: featuredReducer
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
