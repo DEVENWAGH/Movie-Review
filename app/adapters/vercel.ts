@@ -1,5 +1,6 @@
 import { createRequestHandler } from "@react-router/node";
 import * as path from "path";
+import * as fs from "fs";
 
 // Cache the build to avoid repeated imports
 let buildCache;
@@ -8,24 +9,38 @@ let buildCache;
 async function loadBuild() {
   if (buildCache) return buildCache;
   
-  try {
-    // Try the primary build path first
+  const possiblePaths = [
+    path.join(process.cwd(), "build/server/index.js"),
+    path.join(process.cwd(), ".vercel/output/functions/_build/server/index.js"),
+    "/var/task/build/server/index.js",
+    path.join(process.cwd(), ".output/server/index.mjs"),
+    path.join(process.cwd(), ".vercel/output/server/index.js")
+  ];
+  
+  console.log("Current directory:", process.cwd());
+  console.log("Attempting to load build from the following paths:");
+  possiblePaths.forEach(p => console.log(`- ${p} (exists: ${fs.existsSync(p)})`));
+  
+  for (const buildPath of possiblePaths) {
     try {
-      buildCache = await import(path.join(process.cwd(), "build/server/index.js"));
-      return buildCache;
+      if (fs.existsSync(buildPath)) {
+        console.log(`Loading build from: ${buildPath}`);
+        buildCache = await import(buildPath);
+        return buildCache;
+      }
     } catch (e) {
-      // Fallback path (sometimes Vercel structures builds differently)
-      buildCache = await import(path.join(process.cwd(), ".vercel/output/functions/_build/server/index.js"));
-      return buildCache;
+      console.log(`Failed to load from ${buildPath}:`, e.message);
     }
-  } catch (error) {
-    console.error("Failed to load server build:", error);
-    throw new Error(`Failed to load server build: ${error.message}`);
   }
+  
+  throw new Error(`Could not find server build in any of the expected locations`);
 }
 
 export default async function handler(req, res) {
   try {
+    // Log request information for debugging
+    console.log(`Handling ${req.method} request to ${req.url}`);
+    
     // Set CORS headers to prevent issues with API requests
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
@@ -36,7 +51,17 @@ export default async function handler(req, res) {
       return res.status(200).end();
     }
     
+    // Verify environment variables are available
+    const envVars = {
+      NODE_ENV: process.env.NODE_ENV,
+      VITE_TMDB_API_KEY: process.env.VITE_TMDB_API_KEY ? "set" : "missing",
+      VITE_TMDB_ACCESS_TOKEN: process.env.VITE_TMDB_ACCESS_TOKEN ? "set" : "missing",
+      VITE_TMDB_ACCOUNT_ID: process.env.VITE_TMDB_ACCOUNT_ID ? "set" : "missing"
+    };
+    console.log("Environment variables status:", envVars);
+    
     const build = await loadBuild();
+    console.log("Build loaded successfully");
     
     // Better error handling for the request handler
     return createRequestHandler({
@@ -44,7 +69,6 @@ export default async function handler(req, res) {
       mode: process.env.NODE_ENV,
       getLoadContext() {
         return {
-          // You can provide environment variables or other context here
           env: {
             TMDB_API_KEY: process.env.VITE_TMDB_API_KEY,
             TMDB_ACCESS_TOKEN: process.env.VITE_TMDB_ACCESS_TOKEN,
@@ -65,7 +89,9 @@ export default async function handler(req, res) {
         <body>
           <h1>Server Error</h1>
           <p>Sorry, something went wrong. Please try again later.</p>
-          ${process.env.NODE_ENV === 'development' ? `<pre>${error.stack || error.message}</pre>` : ''}
+          <p>Error type: ${error.name}</p>
+          ${process.env.NODE_ENV === 'development' || process.env.DEBUG === 'true' ? 
+            `<pre>${error.stack || error.message}</pre>` : ''}
         </body>
       </html>
     `);
