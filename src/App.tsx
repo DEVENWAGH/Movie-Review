@@ -53,7 +53,7 @@ function AppContent() {
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_relativeSplatPath: true }}>
       <ErrorBoundary>
         <AppContent />
       </ErrorBoundary>

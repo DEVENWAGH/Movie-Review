@@ -32,7 +32,7 @@ export default function Details() {
   useEffect(() => {
     if (!mediaType || !id) {
       console.error("Missing mediaType or ID. Redirecting to home.");
-      navigate("/"); // Redirect to home if params are missing
+      navigate("/");
       return;
     }
 
@@ -40,6 +40,11 @@ export default function Details() {
       .unwrap()
       .catch((error) => {
         console.error("Error fetching details:", error.message);
+        if (error.response?.status === 404) {
+          console.error(
+            "Movie not found. Check the ID or region restrictions."
+          );
+        }
       });
 
     return () => {
