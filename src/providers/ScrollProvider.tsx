@@ -15,10 +15,10 @@ export default function ScrollProvider({
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: "vertical",
-      gestureDirection: "vertical",
-      smooth: true,
-      smoothTouch: false,
+      orientation: "vertical", // Changed from direction to orientation
+      gestureOrientation: "vertical", // Changed from gestureDirection
+      smoothWheel: true, // Changed from smooth to smoothWheel
+      wheelMultiplier: 1,
       touchMultiplier: 2,
     });
 

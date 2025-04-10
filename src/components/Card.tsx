@@ -4,13 +4,17 @@ import {
   StarIcon,
   PlusIcon,
   CheckIcon,
-  XMarkIcon
+  XMarkIcon,
 } from "@heroicons/react/24/solid";
 import { useState, useCallback } from "react";
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { addToWatchlist, rateMedia, addToRatings } from '../store/slices/userActionsSlice';
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import {
+  addToWatchlist,
+  rateMedia,
+  addToRatings,
+} from "../store/slices/userActionsSlice";
 import { motion, AnimatePresence } from "motion/react";
-import Portal from './shared/Portal';
+import Portal from "./shared/Portal";
 
 interface CardProps {
   id: number;
@@ -43,54 +47,68 @@ export default function Card({
   isBookmarked: defaultIsBookmarked,
 }: Readonly<CardProps>) {
   const dispatch = useAppDispatch();
-  const isBookmarked = useAppSelector(state => state.userActions.watchlist.has(id)) || defaultIsBookmarked;
-  const userRating = useAppSelector(state => state.userActions.ratings.get(id)) || 0;
+  const isBookmarked =
+    useAppSelector((state) =>
+      state.userActions.watchlist.some((item) => item.mediaId === id)
+    ) || defaultIsBookmarked;
+  const userRating =
+    useAppSelector(
+      (state) =>
+        state.userActions.ratings.find((item) => item.mediaId === id)?.rating
+    ) || 0;
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);
 
   // Determine the correct media type
-  const resolvedMediaType = mediaType ?? media_type ?? (title ? 'movie' : 'tv');
+  const resolvedMediaType = mediaType ?? media_type ?? (title ? "movie" : "tv");
 
   const formatDate = (date?: string) => {
     if (!date) return "";
-    return showFullDate 
-      ? new Date(date).toLocaleDateString('en-US', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric'
+    return showFullDate
+      ? new Date(date).toLocaleDateString("en-US", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
         })
       : new Date(date).getFullYear();
   };
 
-  const handleBookmark = useCallback(async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();  // Add this to prevent link navigation
-    try {
-      await dispatch(addToWatchlist({
-        mediaId: id,
-        mediaType: resolvedMediaType,
-        watchlist: !isBookmarked
-      })).unwrap();
-    } catch (error) {
-      console.error('Failed to bookmark:', error);
-    }
-  }, [dispatch, id, isBookmarked, resolvedMediaType]);
+  const handleBookmark = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation(); // Add this to prevent link navigation
+      try {
+        await dispatch(
+          addToWatchlist({
+            mediaId: id,
+            mediaType: resolvedMediaType,
+            watchlist: !isBookmarked,
+          })
+        ).unwrap();
+      } catch (error) {
+        console.error("Failed to bookmark:", error);
+      }
+    },
+    [dispatch, id, isBookmarked, resolvedMediaType]
+  );
 
   const handleRating = async (rating: number) => {
     try {
-      const response = await dispatch(rateMedia({
-        mediaId: id,
-        mediaType: resolvedMediaType,
-        rating: rating * 2 // Convert 5-star to 10-point scale
-      })).unwrap();
-      
+      const response = await dispatch(
+        rateMedia({
+          mediaId: id,
+          mediaType: resolvedMediaType,
+          rating: rating * 2, // Convert 5-star to 10-point scale
+        })
+      ).unwrap();
+
       if (response.success) {
         // Only set rating if API call was successful
         dispatch(addToRatings({ mediaId: id, rating }));
         setIsRatingOpen(false);
       }
     } catch (error) {
-      console.error('Failed to rate:', error);
+      console.error("Failed to rate:", error);
     }
   };
 
@@ -101,11 +119,11 @@ export default function Card({
       const response = await fetch(
         `https://api.themoviedb.org/3/${resolvedMediaType}/${id}/rating`,
         {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_TMDB_ACCESS_TOKEN}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${import.meta.env.VITE_TMDB_ACCESS_TOKEN}`,
+            "Content-Type": "application/json",
+          },
         }
       );
       const data = await response.json();
@@ -114,24 +132,24 @@ export default function Card({
         setIsRatingOpen(false);
       }
     } catch (error) {
-      console.error('Failed to remove rating:', error);
+      console.error("Failed to remove rating:", error);
     }
   };
 
   const getStarColor = (star: number) => {
     if (isRatingOpen && hoverRating >= star) {
-      return 'text-sky-400 stroke-sky-400';
+      return "text-sky-400 stroke-sky-400";
     }
     if (userRating >= star) {
-      return 'text-sky-400 fill-sky-400';
+      return "text-sky-400 fill-sky-400";
     }
-    return 'text-sky-400 stroke-sky-400 fill-none';
+    return "text-sky-400 stroke-sky-400 fill-none";
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     // Don't navigate if clicking on star rating or watchlist buttons
-    if (target.closest('button')) {
+    if (target.closest("button")) {
       e.preventDefault();
       e.stopPropagation();
       return;
@@ -141,8 +159,8 @@ export default function Card({
 
   return (
     <>
-      <div 
-        onClick={handleCardClick} 
+      <div
+        onClick={handleCardClick}
         className="relative flex flex-col gap-2 w-[280px] min-h-[480px] cursor-pointer mx-auto"
       >
         {/* Poster Container with increased height */}
@@ -172,7 +190,9 @@ export default function Card({
               {vote_average && (
                 <>
                   <StarIcon className="w-4 h-4 text-[#FFD700] fill-[#FFD700]" />
-                  <span className="font-medium text-white">{vote_average.toFixed(1)}</span>
+                  <span className="font-medium text-white">
+                    {vote_average.toFixed(1)}
+                  </span>
                 </>
               )}
               {/* Rating Star Button */}
@@ -184,17 +204,17 @@ export default function Card({
                 }}
                 className="relative ml-1 group"
               >
-                <StarIcon 
+                <StarIcon
                   className={`w-5 h-5 ${
-                    userRating > 0 
-                      ? 'text-sky-400 fill-sky-400' 
-                      : 'text-sky-400 stroke-sky-400 fill-none'
+                    userRating > 0
+                      ? "text-sky-400 fill-sky-400"
+                      : "text-sky-400 stroke-sky-400 fill-none"
                   }`}
                   strokeWidth={2}
                 />
               </button>
             </div>
-            
+
             {/* Year on right side */}
             {(release_date || first_air_date) && (
               <span className="text-gray-400">
@@ -204,7 +224,7 @@ export default function Card({
           </div>
 
           {/* Title - Add min height */}
-          <a 
+          <a
             href={`/details/${resolvedMediaType}/${id}`}
             className="block"
             onClick={(e) => {
@@ -218,7 +238,7 @@ export default function Card({
           </a>
 
           {/* Action Button - Fixed height */}
-          <button 
+          <button
             onClick={handleBookmark}
             className="flex items-center justify-center w-full h-10 gap-2 text-blue-400 transition-colors rounded-md bg-white/10 hover:bg-white/20"
           >
@@ -253,9 +273,9 @@ export default function Card({
 
               {/* Modal */}
               <motion.div
-                initial={{ y: '100vh' }}
+                initial={{ y: "100vh" }}
                 animate={{ y: 0 }}
-                exit={{ y: '100vh' }}
+                exit={{ y: "100vh" }}
                 transition={{
                   type: "spring",
                   damping: 30,
@@ -270,7 +290,9 @@ export default function Card({
                   </div>
 
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-medium text-white">Rate this {resolvedMediaType}</h3>
+                    <h3 className="text-xl font-medium text-white">
+                      Rate this {resolvedMediaType}
+                    </h3>
                     <button
                       onClick={() => setIsRatingOpen(false)}
                       className="p-2 text-gray-400 rounded-full hover:text-white hover:bg-gray-800"
@@ -280,7 +302,7 @@ export default function Card({
                   </div>
 
                   <div className="flex justify-center gap-3 mb-6">
-                    {[1,2,3,4,5].map((star) => (
+                    {[1, 2, 3, 4, 5].map((star) => (
                       <button
                         key={star}
                         onMouseEnter={() => setHoverRating(star)}
@@ -292,8 +314,10 @@ export default function Card({
                         }}
                         className="p-2 transition-transform hover:scale-110"
                       >
-                        <StarIcon 
-                          className={`w-10 h-10 ${getStarColor(star)} transition-colors`}
+                        <StarIcon
+                          className={`w-10 h-10 ${getStarColor(
+                            star
+                          )} transition-colors`}
                           strokeWidth={2}
                         />
                       </button>
@@ -301,13 +325,13 @@ export default function Card({
                   </div>
 
                   <div className="mb-6 text-center text-gray-400">
-                    {hoverRating > 0 ? (
-                      ['Terrible', 'Poor', 'Average', 'Good', 'Excellent'][hoverRating - 1]
-                    ) : userRating > 0 ? (
-                      'Update your rating'
-                    ) : (
-                      'Rate this content'
-                    )}
+                    {hoverRating > 0
+                      ? ["Terrible", "Poor", "Average", "Good", "Excellent"][
+                          hoverRating - 1
+                        ]
+                      : userRating > 0
+                      ? "Update your rating"
+                      : "Rate this content"}
                   </div>
 
                   {userRating > 0 && (

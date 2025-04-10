@@ -1,21 +1,24 @@
-export default function Movie() {
-  // Add error handling for sections
+import React from "react";
+import SimpleSlider from "./SimpleSlider";
+
+interface MovieSection {
+  title: string;
+  items: any[];
+}
+
+interface MovieProps {
+  sections: MovieSection[];
+}
+
+export default function Movie({ sections }: Readonly<MovieProps>) {
   if (!sections || sections.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-[#0A1625]">
-        <p className="text-xl text-white">No movie data available</p>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="min-h-screen bg-[#0A1625]">
+    <div className="space-y-12">
       {sections.map((section, sectionIndex) => (
-        <Slider
-          key={`${section.title}-${sectionIndex}`}
-          title={section.title}
-          items={section.items}
-        />
+        <SimpleSlider key={`section-${sectionIndex}`} items={section.items} />
       ))}
     </div>
   );

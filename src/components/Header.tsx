@@ -5,10 +5,10 @@ import { PlayIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 
 interface HeaderProps {
-  readonly data: any;
-  readonly children?: React.ReactNode;
-  readonly onWatchTrailer?: () => void;
-  readonly trailer?: any;
+  data: any;
+  children?: React.ReactNode;
+  onWatchTrailer?: () => void;
+  trailer?: string;
 }
 
 export default function Header({
@@ -16,7 +16,7 @@ export default function Header({
   children,
   onWatchTrailer,
   trailer,
-}: HeaderProps) {
+}: Readonly<HeaderProps>) {
   const [scope, animate] = useAnimate();
 
   if (!data) return null;
@@ -30,23 +30,27 @@ export default function Header({
   const mediaType = data.media_type || (data.title ? "movie" : "tv");
 
   // Use a consistent easing curve for all animations
-  const easing = [0.22, 1, 0.36, 1];
+  const easing = "easeInOut"; // Using a predefined easing name instead of a custom array
 
   useEffect(() => {
     const sequence = async () => {
       // Start backdrop and overlay animations immediately
       await Promise.all([
         animate(
-          "img",
+          scope.current.querySelector("img"),
           { scale: 1, opacity: 1 },
           { duration: 0.7, ease: easing }
         ),
-        animate(".overlay", { opacity: 1 }, { duration: 0.5, ease: easing }),
+        animate(
+          scope.current.querySelector(".overlay"),
+          { opacity: 1 },
+          { duration: 0.5, ease: easing }
+        ),
       ]);
 
       // Then animate content in a coordinated sequence
       await animate(
-        ".content > *",
+        scope.current.querySelectorAll(".content > *"),
         { y: 0, opacity: 1 },
         {
           duration: 0.5,
@@ -107,8 +111,11 @@ export default function Header({
             </Link>
 
             {/* Watch Trailer button */}
-            {trailer && (
-              <TrailerButton trailer={trailer} onClick={onWatchTrailer} />
+            {trailer && onWatchTrailer && (
+              <TrailerButton
+                trailer={trailer}
+                onClick={() => onWatchTrailer()}
+              />
             )}
             {!trailer && onWatchTrailer && (
               <button

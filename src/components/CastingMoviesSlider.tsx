@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { Link } from "react-router-dom"; // Updated from "react-router" to "react-router-dom"
+import React, { useRef, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, FreeMode, Mousewheel, Keyboard } from "swiper/modules";
 
@@ -9,7 +9,7 @@ import "swiper/css/navigation";
 import "swiper/css/free-mode";
 
 interface CastingMoviesSliderProps {
-  items: Array<{
+  items?: Array<{
     id: number;
     title?: string;
     name?: string;
@@ -19,15 +19,39 @@ interface CastingMoviesSliderProps {
     release_date?: string;
     first_air_date?: string;
   }>;
+  personId?: string;
 }
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w300";
 const PLACEHOLDER_IMAGE = "/logo.svg";
 
 export default function CastingMoviesSlider({
-  items,
+  items = [],
+  personId,
 }: Readonly<CastingMoviesSliderProps>) {
   const swiperRef = useRef(null);
+  const [castingMovies, setCastingMovies] = useState(items);
+
+  useEffect(() => {
+    if (personId && (!items || items.length === 0)) {
+      // Fetch person's movies if personId is provided but no items
+      const fetchPersonMovies = async () => {
+        try {
+          // Implementation would depend on your API service
+          // const response = await apiService.getPersonMovies(personId);
+          // setCastingMovies(response.data.cast);
+        } catch (error) {
+          console.error("Error fetching person movies:", error);
+        }
+      };
+
+      fetchPersonMovies();
+    }
+  }, [personId, items]);
+
+  if (!castingMovies || castingMovies.length === 0) {
+    return null;
+  }
 
   return (
     <div
@@ -64,7 +88,7 @@ export default function CastingMoviesSlider({
         resistance={false}
         className="casting-slider"
       >
-        {items.map((item) => (
+        {castingMovies.map((item) => (
           <SwiperSlide
             key={`${item.id}-${item.character}`}
             className="!w-[200px] h-auto"

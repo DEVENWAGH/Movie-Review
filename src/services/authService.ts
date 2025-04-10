@@ -3,24 +3,60 @@ const ACCESS_TOKEN = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 const ACCOUNT_ID = import.meta.env.VITE_TMDB_ACCOUNT_ID;
 const BASE_URL = 'https://api.themoviedb.org/3';
 
-export const tmdbFetch = async (endpoint: string, options = {}) => {
-  try {
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
-      ...options,
-      headers: {
-        'Authorization': `Bearer ${ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-        ...options.headers
-      }
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  } catch (error) {
-    console.error('TMDB Fetch Error:', error);
-    throw error;
+// Add REDIRECT_URL constant
+const REDIRECT_URL = window.location.origin + "/auth/callback";
+
+// Add the missing getToken function
+const getToken = (): string | null => {
+  return localStorage.getItem('auth_token');
+};
+
+// Define a proper interface for the options parameter
+interface RequestOptions {
+  headers?: Record<string, string>;
+  [key: string]: any; // Allow other properties
+}
+
+export const fetchWithAuth = async (url: string, options: RequestOptions = {}) => {
+  // Get token and add to headers
+  const token = getToken();
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(token && { 'Authorization': `Bearer ${token}` }),
+    ...(options.headers || {}) // Now TypeScript knows options.headers can exist
+  };
+
+  const response = await fetch(url, {
+    ...options,
+    headers
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
+  return response.json();
+};
+
+export const tmdbFetch = async (endpoint: string, options: RequestOptions = {}) => {
+  // Get token and add to headers
+  const token = getToken();
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${ACCESS_TOKEN}`,
+    ...(options.headers || {}) // Now TypeScript knows options.headers can exist
+  };
+
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
+    ...options,
+    headers
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
 };
 
 export const authService = {

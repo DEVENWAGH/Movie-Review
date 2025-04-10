@@ -1,9 +1,36 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { getUserRatings } from '../../services/tmdbApi';
+
+// Define proper interfaces
+export interface WatchlistItem {
+  id: number;
+  mediaId: number;
+  mediaType: string;
+  title?: string;
+  name?: string;
+  poster_path?: string;
+  vote_average?: number;
+  release_date?: string;
+  first_air_date?: string;
+}
+
+interface UserActionsState {
+  watchlist: WatchlistItem[];
+  ratings: any[];
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: UserActionsState = {
+  watchlist: [],
+  ratings: [],
+  loading: false,
+  error: null,
+};
 
 export const addToWatchlist = createAsyncThunk(
   'userActions/addToWatchlist',
-  async ({ mediaId, mediaType, watchlist }, { dispatch }) => {
+  async (payload: { mediaId: number; mediaType: string; watchlist: boolean }, { dispatch }) => {
     const response = await fetch(
       `https://api.themoviedb.org/3/account/${import.meta.env.VITE_TMDB_ACCOUNT_ID}/watchlist`,
       {
@@ -13,9 +40,9 @@ export const addToWatchlist = createAsyncThunk(
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          media_type: mediaType,
-          media_id: mediaId,
-          watchlist
+          media_type: payload.mediaType,
+          media_id: payload.mediaId,
+          watchlist: payload.watchlist
         })
       }
     );
@@ -24,7 +51,7 @@ export const addToWatchlist = createAsyncThunk(
       // Fetch updated watchlist after successful addition/removal
       dispatch(fetchWatchlist());
     }
-    return { mediaId, success: data.success };
+    return { mediaId: payload.mediaId, success: data.success, watchlist: payload.watchlist };
   }
 );
 
@@ -81,24 +108,23 @@ export const fetchUserRatings = createAsyncThunk(
   }
 );
 
+export const addToRatings = createAsyncThunk(
+  'userActions/addToRatings',
+  async (payload: { mediaId: number; rating: number }) => {
+    return payload;
+  }
+);
+
 const userActionsSlice = createSlice({
   name: 'userActions',
-  initialState: {
-    watchlist: new Set<number>(),
-    watchlistItems: [],
-    ratings: new Map<number, number>(),
-    loading: false,
-    error: null
-  },
+  initialState,
   reducers: {
-    addToRatings: (state, action) => {
-      state.ratings.set(action.payload.mediaId, action.payload.rating);
-    },
-    addToWatchlistSet: (state, action) => {
-      if (state.watchlist.has(action.payload)) {
-        state.watchlist.delete(action.payload);
+    addToWatchlistSet: (state, action: PayloadAction<number>) => {
+      const index = state.watchlist.findIndex(item => item.mediaId === action.payload);
+      if (index !== -1) {
+        state.watchlist.splice(index, 1);
       } else {
-        state.watchlist.add(action.payload);
+        state.watchlist.push({ id: action.payload, mediaId: action.payload, mediaType: '' });
       }
     }
   },
@@ -111,14 +137,16 @@ const userActionsSlice = createSlice({
       .addCase(addToWatchlist.fulfilled, (state, action) => {
         state.loading = false;
         if (action.payload.success) {
-          const currentValue = state.watchlist.has(action.payload.mediaId);
-          if (currentValue) {
-            state.watchlist.delete(action.payload.mediaId);
-            state.watchlistItems = state.watchlistItems.filter(
-              item => item.id !== action.payload.mediaId
+          if (action.payload.watchlist === false) {
+            state.watchlist = state.watchlist.filter(
+              item => item.mediaId !== action.payload.mediaId
             );
           } else {
-            state.watchlist.add(action.payload.mediaId);
+            state.watchlist.push({
+              id: action.payload.mediaId,
+              mediaId: action.payload.mediaId,
+              mediaType: ''
+            });
           }
         }
       })
@@ -133,7 +161,7 @@ const userActionsSlice = createSlice({
       .addCase(rateMedia.fulfilled, (state, action) => {
         state.loading = false;
         if (action.payload.success) {
-          state.ratings.set(action.payload.mediaId, action.payload.rating);
+          state.ratings.push({ mediaId: action.payload.mediaId, rating: action.payload.rating });
         }
       })
       .addCase(rateMedia.rejected, (state, action) => {
@@ -145,20 +173,23 @@ const userActionsSlice = createSlice({
       })
       .addCase(fetchWatchlist.fulfilled, (state, action) => {
         state.loading = false;
-        state.watchlistItems = action.payload;
-        state.watchlist = new Set(action.payload.map(item => item.id));
+        state.watchlist = action.payload;
       })
       .addCase(fetchWatchlist.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.error.message ?? null; // Use nullish coalescing to ensure null
       })
       .addCase(fetchUserRatings.fulfilled, (state, action) => {
         action.payload.forEach(({ mediaId, rating }) => {
-          state.ratings.set(mediaId, rating);
+          state.ratings.push({ mediaId, rating });
         });
+      })
+      .addCase(addToRatings.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message ?? null; // Use nullish coalescing to ensure null
       });
   }
 });
 
-export const { addToRatings, addToWatchlistSet } = userActionsSlice.actions;
+export const { addToWatchlistSet } = userActionsSlice.actions;
 export default userActionsSlice.reducer;
