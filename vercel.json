@@ -12,5 +12,8 @@
     "VITE_TMDB_API_KEY": "@vite_tmdb_api_key",
     "VITE_TMDB_ACCESS_TOKEN": "@vite_tmdb_access_token",
     "VITE_TMDB_ACCOUNT_ID": "@vite_tmdb_account_id"
+  },
+  "github": {
+    "silent": false
   }
 }

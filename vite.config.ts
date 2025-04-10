@@ -9,4 +9,15 @@ export default defineConfig({
     tailwindcss(),
     tsconfigPaths(),
   ],
+  build: {
+    chunkSizeWarningLimit: 700, // Increase from default 500
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom", "react-router-dom"],
+          // Add more manual chunks as needed
+        },
+      },
+    },
+  },
 });
