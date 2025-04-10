@@ -12,9 +12,11 @@ import {
   addToWatchlist,
   rateMedia,
   addToRatings,
+  fetchWatchlist,
 } from "../store/slices/userActionsSlice";
 import { motion, AnimatePresence } from "motion/react";
 import Portal from "./shared/Portal";
+import { useLocation } from "react-router-dom";
 
 interface CardProps {
   id: number;
@@ -43,14 +45,31 @@ export default function Card({
   first_air_date,
   isSlider,
   showFullDate,
-  mediaType, // Add this prop
+  mediaType,
   isBookmarked: defaultIsBookmarked,
 }: Readonly<CardProps>) {
   const dispatch = useAppDispatch();
-  const isBookmarked =
-    useAppSelector((state) =>
-      state.userActions.watchlist.some((item) => item.mediaId === id)
-    ) || defaultIsBookmarked;
+  const watchlist = useAppSelector((state) => state.userActions.watchlist);
+  const location = useLocation();
+  const isWatchlistPage = location.pathname === "/watchlist";
+
+  // Enhanced watchlist check - handle both direct ID match and mediaId match
+  const isInWatchlist = watchlist.some(
+    (item) => item.mediaId === id || item.id === id
+  );
+
+  // On watchlist page, always use true; elsewhere use redux state unless prop is provided
+  const isBookmarked = isWatchlistPage
+    ? true
+    : typeof defaultIsBookmarked !== "undefined"
+    ? defaultIsBookmarked
+    : isInWatchlist;
+
+  // Handle missing poster path
+  const imageSrc = poster_path
+    ? `https://image.tmdb.org/t/p/w500${poster_path}`
+    : "/logo.svg"; // Fallback image
+
   const userRating =
     useAppSelector(
       (state) =>
@@ -59,7 +78,6 @@ export default function Card({
   const [isRatingOpen, setIsRatingOpen] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);
 
-  // Determine the correct media type
   const resolvedMediaType = mediaType ?? media_type ?? (title ? "movie" : "tv");
 
   const formatDate = (date?: string) => {
@@ -76,20 +94,29 @@ export default function Card({
   const handleBookmark = useCallback(
     async (e: React.MouseEvent) => {
       e.preventDefault();
-      e.stopPropagation(); // Add this to prevent link navigation
+      e.stopPropagation();
+
       try {
+        // When on watchlist page and removing, we want to force "false" regardless of current state
+        const newBookmarkState = isWatchlistPage ? false : !isBookmarked;
+
         await dispatch(
           addToWatchlist({
             mediaId: id,
             mediaType: resolvedMediaType,
-            watchlist: !isBookmarked,
+            watchlist: newBookmarkState,
           })
         ).unwrap();
+
+        // On watchlist page, refresh the watchlist to update UI
+        if (isWatchlistPage) {
+          dispatch(fetchWatchlist());
+        }
       } catch (error) {
-        console.error("Failed to bookmark:", error);
+        console.error("Failed to update watchlist:", error);
       }
     },
-    [dispatch, id, isBookmarked, resolvedMediaType]
+    [dispatch, id, resolvedMediaType, isBookmarked, isWatchlistPage]
   );
 
   const handleRating = async (rating: number) => {
@@ -98,12 +125,11 @@ export default function Card({
         rateMedia({
           mediaId: id,
           mediaType: resolvedMediaType,
-          rating: rating * 2, // Convert 5-star to 10-point scale
+          rating: rating * 2,
         })
       ).unwrap();
 
       if (response.success) {
-        // Only set rating if API call was successful
         dispatch(addToRatings({ mediaId: id, rating }));
         setIsRatingOpen(false);
       }
@@ -148,7 +174,6 @@ export default function Card({
 
   const handleCardClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
-    // Don't navigate if clicking on star rating or watchlist buttons
     if (target.closest("button")) {
       e.preventDefault();
       e.stopPropagation();
@@ -163,12 +188,15 @@ export default function Card({
         onClick={handleCardClick}
         className="relative flex flex-col gap-2 w-[280px] min-h-[480px] cursor-pointer mx-auto"
       >
-        {/* Poster Container with increased height */}
         <div className="relative w-full h-[400px] rounded-lg overflow-hidden bg-gray-800">
           <img
-            src={`https://image.tmdb.org/t/p/w500${poster_path}`}
-            alt={title ?? name}
+            src={imageSrc}
+            alt={title ?? name ?? "Movie poster"}
             className="object-cover w-full h-full"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = "/logo.svg";
+            }}
           />
           <button
             onClick={handleBookmark}
@@ -182,9 +210,7 @@ export default function Card({
           </button>
         </div>
 
-        {/* Content wrapper - Add flex grow */}
         <div className="flex flex-col justify-between flex-grow">
-          {/* Rating and Year Section */}
           <div className="flex items-center justify-between min-h-[24px]">
             <div className="flex items-center gap-2">
               {vote_average && (
@@ -195,7 +221,6 @@ export default function Card({
                   </span>
                 </>
               )}
-              {/* Rating Star Button */}
               <button
                 onClick={(e) => {
                   e.preventDefault();
@@ -215,7 +240,6 @@ export default function Card({
               </button>
             </div>
 
-            {/* Year on right side */}
             {(release_date || first_air_date) && (
               <span className="text-gray-400">
                 {formatDate(release_date ?? first_air_date)}
@@ -223,7 +247,6 @@ export default function Card({
             )}
           </div>
 
-          {/* Title - Add min height */}
           <a
             href={`/details/${resolvedMediaType}/${id}`}
             className="block"
@@ -237,12 +260,16 @@ export default function Card({
             </h3>
           </a>
 
-          {/* Action Button - Fixed height */}
           <button
             onClick={handleBookmark}
             className="flex items-center justify-center w-full h-10 gap-2 text-blue-400 transition-colors rounded-md bg-white/10 hover:bg-white/20"
           >
-            {isBookmarked ? (
+            {isWatchlistPage ? (
+              <>
+                <XMarkIcon className="w-4 h-4" />
+                Remove from Watchlist
+              </>
+            ) : isBookmarked ? (
               <>
                 <CheckIcon className="w-4 h-4" />
                 Added to Watchlist
@@ -257,12 +284,10 @@ export default function Card({
         </div>
       </div>
 
-      {/* Rating Modal */}
       <AnimatePresence>
         {isRatingOpen && (
           <Portal>
             <div className="fixed inset-0 z-[9999] overflow-hidden">
-              {/* Overlay */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -271,7 +296,6 @@ export default function Card({
                 onClick={() => setIsRatingOpen(false)}
               />
 
-              {/* Modal */}
               <motion.div
                 initial={{ y: "100vh" }}
                 animate={{ y: 0 }}
@@ -284,7 +308,6 @@ export default function Card({
                 className="absolute inset-x-0 bottom-0 z-50 p-6 bg-gray-900 border-t border-gray-800 rounded-t-2xl"
               >
                 <div className="max-w-lg mx-auto">
-                  {/* Drag Handle */}
                   <div className="flex justify-center mb-4">
                     <div className="w-12 h-1 bg-gray-700 rounded-full"></div>
                   </div>

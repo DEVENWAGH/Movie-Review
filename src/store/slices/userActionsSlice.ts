@@ -46,12 +46,50 @@ export const addToWatchlist = createAsyncThunk(
         })
       }
     );
+
     const data = await response.json();
-    if (data.success) {
-      // Fetch updated watchlist after successful addition/removal
-      dispatch(fetchWatchlist());
+
+    if (data.success && payload.watchlist) {
+      try {
+        const itemDetailsResponse = await fetch(
+          `https://api.themoviedb.org/3/${payload.mediaType}/${payload.mediaId}?language=en-US`,
+          {
+            headers: {
+              'Authorization': `Bearer ${import.meta.env.VITE_TMDB_ACCESS_TOKEN}`,
+              'accept': 'application/json'
+            }
+          }
+        );
+
+        if (itemDetailsResponse.ok) {
+          const itemDetails = await itemDetailsResponse.json();
+          return {
+            success: true,
+            mediaId: payload.mediaId,
+            watchlist: payload.watchlist,
+            itemDetails: {
+              id: itemDetails.id,
+              mediaId: itemDetails.id,
+              mediaType: payload.mediaType,
+              title: itemDetails.title || itemDetails.name,
+              name: itemDetails.name,
+              poster_path: itemDetails.poster_path,
+              vote_average: itemDetails.vote_average,
+              release_date: itemDetails.release_date,
+              first_air_date: itemDetails.first_air_date
+            }
+          };
+        }
+      } catch (error) {
+        console.error("Failed to fetch item details:", error);
+      }
     }
-    return { mediaId: payload.mediaId, success: data.success, watchlist: payload.watchlist };
+
+    return {
+      success: data.success,
+      mediaId: payload.mediaId,
+      watchlist: payload.watchlist
+    };
   }
 );
 
@@ -142,11 +180,15 @@ const userActionsSlice = createSlice({
               item => item.mediaId !== action.payload.mediaId
             );
           } else {
-            state.watchlist.push({
-              id: action.payload.mediaId,
-              mediaId: action.payload.mediaId,
-              mediaType: ''
-            });
+            if (action.payload.itemDetails) {
+              state.watchlist.push(action.payload.itemDetails);
+            } else {
+              state.watchlist.push({
+                id: action.payload.mediaId,
+                mediaId: action.payload.mediaId,
+                mediaType: action.payload.mediaType || ''
+              });
+            }
           }
         }
       })

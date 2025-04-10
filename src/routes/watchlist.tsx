@@ -18,7 +18,7 @@ export default function WatchlistPage() {
 
   return (
     <Layout>
-      <div className="container mx-auto">
+      <div className="container mx-auto p-6">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -46,14 +46,22 @@ export default function WatchlistPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-items-center"
           >
             {watchlist.map((movie) => (
-              <div key={movie.id} className="movie-card">
+              <div
+                key={movie.id || movie.mediaId}
+                className="movie-card w-full flex justify-center"
+              >
                 <Card
-                  {...movie}
-                  poster_path={movie.poster_path || ""} // Ensure poster_path is never undefined
-                  media_type={movie.mediaType} // Changed from media_type to mediaType
+                  id={movie.mediaId || movie.id}
+                  poster_path={movie.poster_path || ""}
+                  title={movie.title || ""}
+                  name={movie.name || ""}
+                  media_type={movie.mediaType || "movie"}
+                  vote_average={movie.vote_average}
+                  release_date={movie.release_date}
+                  first_air_date={movie.first_air_date}
                   isBookmarked={true}
                 />
               </div>
