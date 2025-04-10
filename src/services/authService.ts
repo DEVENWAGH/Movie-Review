@@ -101,13 +101,36 @@ export const authService = {
   }
 };
 
-// Call this when your app starts
-export const initializeTMDB = async () => {
+let isInitialized = false;
+
+/**
+ * Initialize the TMDB API client
+ * @param force Force reinitialization even if already initialized
+ */
+export const initializeTMDB = async (force = false): Promise<void> => {
+  if (isInitialized && !force) {
+    return;
+  }
+  
   try {
+    // Get API key from environment variable
+    const apiKey = import.meta.env.VITE_TMDB_API_KEY;
+    
+    if (!apiKey) {
+      throw new Error('TMDB API key not found in environment variables');
+    }
+
+    // Your existing initialization code
     const accountId = await authService.getAccountDetails();
     console.log('Your TMDB Account ID:', accountId);
-    // You can add this to your .env file
+
+    // Set session token or other auth mechanisms
+    // Add any additional initialization logic here
+
+    isInitialized = true;
+    console.log('TMDB API initialized successfully');
   } catch (error) {
-    console.error('Error getting account ID:', error);
+    console.error('Failed to initialize TMDB:', error);
+    throw error;
   }
 };

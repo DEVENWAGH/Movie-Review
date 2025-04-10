@@ -114,6 +114,21 @@ Before deploying, make sure to set the following environment variables in your V
 
 Alternatively, you can deploy directly from GitHub by connecting your repository to Vercel.
 
+### Additional Notes for Vercel Deployment
+
+When deploying to Vercel, make sure to:
+
+1. Add all required environment variables in the Vercel dashboard:
+
+   - `VITE_TMDB_API_KEY`: Your TMDB API key
+
+2. The `vercel.json` file is configured to handle client-side routing properly, preventing 404 errors on routes like `/details/movie/1195506`.
+
+3. If you encounter API authentication issues:
+   - Check that your API key is correctly set in Vercel environment variables
+   - You may need to log in to TMDB to reactivate your API key if it has expired
+   - The application includes automatic re-authentication attempts for common API errors
+
 ## Styling
 
 This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
