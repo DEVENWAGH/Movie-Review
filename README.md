@@ -1,8 +1,12 @@
-# Movie-Review Application
+# Movie Review App
 
-A modern, production-ready template for building full-stack React applications using React Router.
+<img src="./public/WatchWise.svg" alt="WatchWise Logo" width="200" />
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+This is a movie review application built with **Vite**, **React**, and **TypeScript**, styled using **TailwindCSS**.
+
+## Live Demo
+
+Check out the live version of the app here: [Movie Review App](https://movie-review-ty.vercel.app/)
 
 ## Features
 
