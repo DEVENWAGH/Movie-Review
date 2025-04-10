@@ -30,30 +30,22 @@ export default function Details() {
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("Media type:", mediaType);
-    console.log("Media ID:", id);
-    console.log("API key available:", !!import.meta.env.VITE_TMDB_API_KEY);
-    console.log(
-      "Access token available:",
-      !!import.meta.env.VITE_TMDB_ACCESS_TOKEN
-    );
-
-    // Log the full URL being fetched (without exposing the actual key)
-    console.log(
-      "Fetching from:",
-      `https://api.themoviedb.org/3/${mediaType}/${id}`
-    );
-
     if (!mediaType || !id) {
+      console.error("Missing mediaType or ID. Redirecting to home.");
       navigate("/"); // Redirect to home if params are missing
       return;
     }
 
-    dispatch(fetchDetails({ mediaType, id }));
+    dispatch(fetchDetails({ mediaType, id }))
+      .unwrap()
+      .catch((error) => {
+        console.error("Error fetching details:", error.message);
+      });
+
     return () => {
       dispatch(resetDetails());
     };
-  }, [dispatch, mediaType, id, navigate, region]); // Add region as dependency
+  }, [dispatch, mediaType, id, navigate, region]);
 
   const getLogoClass = (logoPath: string) => {
     // Check if logo is already on dark background or has transparency
@@ -128,7 +120,8 @@ export default function Details() {
               The requested {mediaType} with ID {id} could not be found.
             </p>
             <p className="mt-2 text-gray-400">
-              This might be due to an API configuration issue or an invalid ID.
+              This might be due to an API configuration issue, invalid ID, or
+              region-specific restrictions.
             </p>
             <button
               onClick={() => (window.location.href = "/")}
