@@ -30,6 +30,20 @@ export default function Details() {
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("Media type:", mediaType);
+    console.log("Media ID:", id);
+    console.log("API key available:", !!import.meta.env.VITE_TMDB_API_KEY);
+    console.log(
+      "Access token available:",
+      !!import.meta.env.VITE_TMDB_ACCESS_TOKEN
+    );
+
+    // Log the full URL being fetched (without exposing the actual key)
+    console.log(
+      "Fetching from:",
+      `https://api.themoviedb.org/3/${mediaType}/${id}`
+    );
+
     if (!mediaType || !id) {
       navigate("/"); // Redirect to home if params are missing
       return;
@@ -102,17 +116,26 @@ export default function Details() {
     );
   }
 
-  // Show error state if no details
-  if (!details) {
+  // Improve the error state with more details
+  if (!details && !loading) {
     return (
       <div className="min-h-screen bg-[#0A1625]">
         <TopNav />
-        <div className="flex justify-center items-center h-[calc(100vh-64px)]">
+        <div className="flex flex-col justify-center items-center h-[calc(100vh-64px)]">
           <div className="text-center text-white">
             <h1 className="mb-2 text-2xl font-bold">Content Not Found</h1>
             <p className="text-gray-400">
-              The requested content could not be found.
+              The requested {mediaType} with ID {id} could not be found.
             </p>
+            <p className="mt-2 text-gray-400">
+              This might be due to an API configuration issue or an invalid ID.
+            </p>
+            <button
+              onClick={() => (window.location.href = "/")}
+              className="px-4 py-2 mt-4 bg-blue-600 rounded-md hover:bg-blue-700"
+            >
+              Return to Home
+            </button>
           </div>
         </div>
       </div>
